@@ -1,7 +1,7 @@
 import sys
 from PyQt6.QtWidgets import QApplication
-from src.views.MainWindow import MainWindow
-from src.models.database import init_db
+from src.views.main_window import MainWindow
+from src.models.init_database import init_db
 
 
 def main():
