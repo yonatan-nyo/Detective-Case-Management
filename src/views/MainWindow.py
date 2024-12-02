@@ -1,15 +1,15 @@
 from PyQt6 import QtWidgets, uic
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QStandardItemModel, QStandardItem, QImage
-from controllers.TodoController import TodoController
+from src.controllers.TodoController import TodoController
 
-tick = QImage('assets/tick.png')
+tick = QImage('img/tick.png')
 
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
-        uic.loadUi('views/mainwindow.ui', self)
+        uic.loadUi('src/views/mainwindow.ui', self)
 
         self.controller = TodoController()
         self.model = QStandardItemModel()

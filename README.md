@@ -70,12 +70,24 @@ python main.py
 
 ```plaintext
 project/
-├── controllers/        # Controller logic (handles business operations)
-├── models/             # Database models and initialization scripts
-├── views/              # PyQt6-based UI components
-├── assets/             # Static assets (images, icons, etc.)
+├── .venv/              # will be created after step 2.Set Up a Virtual Environment
+├── doc/                # Documentation files
+├── img/                # Images and visual resources
+├── src/                # Source code directory
+│   ├── __init__.py     # Initialize the src package
+│   ├── __pycache__/    # Compiled Python files (auto-generated)
+│   ├── controllers/    # Controller logic (handles business operations)
+│   ├── models/         # Database models and initialization scripts
+│   └── views/          # PyQt6-based UI components
+├── tests/              # Unit tests and testing framework
+├── .env
+├── .gitignore
 ├── main.py             # Entry point of the application
-├── requirements.txt    # List of Python dependencies
-├── .env                # Database configuration (excluded in version control)
-└── README.md           # Project documentation
+├── README.md           # Project documentation
+└── requirements.txt    # List of Python dependencies
+
 ```
+
+## Modules
+
+## Database

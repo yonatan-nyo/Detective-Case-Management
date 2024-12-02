@@ -1,5 +1,5 @@
-from models.database import SessionLocal
-from models.Todo import Todo
+from src.models.database import SessionLocal
+from src.models.Todo import Todo
 
 
 class TodoController:
