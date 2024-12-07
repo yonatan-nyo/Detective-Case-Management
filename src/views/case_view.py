@@ -26,6 +26,9 @@ def on_navigation_change(page: ft.Page, selected_index: int):
     elif selected_index == 2:
         from views.victim_view import VictimView
         VictimView().render(page)
+    elif selected_index == 3:
+        from views.schedule_view import Schedule
+        Schedule().render(page)
     else:
         page.controls.clear()
         page.add(
