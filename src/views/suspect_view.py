@@ -74,7 +74,7 @@ class SuspectView:
                 e.control.update()
 
             def on_tap_down(_e: ft.ContainerTapEvent, idx=_idx):
-                print("Suspect tapped:", idx)
+                self.render_suspect_detail(suspects[idx].id)
 
             suspect_card = (
                 ft.Container(
@@ -302,6 +302,10 @@ class SuspectView:
         # Add file picker to page overlay
         self.page.overlay.append(pick_file_dialog)
 
+        def go_back(e):
+            """Handles the back button click."""
+            self.render(self.page)
+
         # Layout and render the form
         self.page.controls.clear()
         self.page.add(
@@ -318,6 +322,11 @@ class SuspectView:
                         gender_dropdown,
                         note_field,
                         submit_button,
+                        ft.ElevatedButton(
+                            text="Back",
+                            icon=ft.Icons.ARROW_BACK,
+                            on_click=go_back,
+                        ),
                     ],
                     expand=True,
                     width=700,
@@ -328,4 +337,240 @@ class SuspectView:
                 alignment=ft.alignment.center,
             )
         )
+        self.page.update()
+
+    def render_suspect_detail(self, suspect_id):
+        """Renders the details of a specific suspect by ID."""
+        # Fetch the suspect by ID
+        suspect = self.controller.get_suspect_by_id(suspect_id)
+        if not suspect:
+            # If no suspect is found, show an error message
+            self.page.controls.clear()
+            self.page.add(
+                ft.Container(
+                    content=ft.Text(
+                        f"No suspect found with ID {suspect_id}.",
+                        size=16,
+                        color=ft.Colors.RED,
+                    ),
+                    alignment=ft.alignment.center,
+                    expand=True,
+                )
+            )
+            self.page.update()
+            return
+
+        # Build the suspect detail view
+        detail_view = ft.Column(
+            [
+                ft.Text("Suspect Details", size=24, weight=ft.FontWeight.BOLD),
+                ft.Text(f"NIK: {suspect.nik}", size=18),
+                ft.Text(f"Name: {suspect.name}", size=18),
+                ft.Text(f"Age: {suspect.age}", size=18),
+                ft.Text(
+                    f"Gender: {'Male' if suspect.gender else 'Female'}", size=18
+                ),
+                ft.Text(f"Note: {suspect.note or 'N/A'}", size=18),
+                ft.Image(
+                    src=suspect.picture_path,
+                    width=300,
+                    height=300,
+                    fit=ft.ImageFit.CONTAIN,
+                ) if suspect.picture_path and os.path.exists(suspect.picture_path)
+                else ft.Text("No Picture Available", size=16),
+                ft.Row(
+                    [
+                        ft.ElevatedButton(
+                            "Back to List",
+                            icon=ft.Icons.ARROW_BACK,
+                            on_click=lambda _: self.render(self.page),
+                        ),
+                        ft.ElevatedButton(
+                            "Edit Suspect",
+                            icon=ft.Icons.EDIT,
+                            on_click=lambda _: self.render_edit_suspect(
+                                suspect_id),
+                        ),
+                        ft.ElevatedButton(
+                            "Delete Suspect",
+                            icon=ft.Icons.DELETE,
+                            bgcolor=ft.Colors.RED,
+                            on_click=lambda _: self.delete_suspect(suspect_id),
+                        ),
+                    ],
+                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                ),
+            ],
+            alignment=ft.MainAxisAlignment.START,
+            spacing=10,
+        )
+
+        # Clear the page and add the detail view
+        self.page.controls.clear()
+        self.page.add(
+            ft.Container(
+                content=detail_view,
+                padding=20,
+                expand=True,
+                alignment=ft.alignment.center,
+            )
+        )
+        self.page.update()
+
+    def render_edit_suspect(self, suspect_id):
+        """Renders the Edit Suspect form."""
+        suspect = self.controller.get_suspect_by_id(suspect_id)
+        if not suspect:
+            self.page.controls.clear()
+            self.page.add(
+                ft.Container(
+                    content=ft.Text(
+                        f"No suspect found with ID {suspect_id}.",
+                        size=16,
+                        color=ft.Colors.RED,
+                    ),
+                    alignment=ft.alignment.center,
+                    expand=True,
+                )
+            )
+            self.page.update()
+            return
+
+        # Prepopulate fields with suspect data
+        nik_field = ft.TextField(label="NIK", value=suspect.nik)
+        picture_path_field = ft.TextField(
+            label="Picture Path", value=suspect.picture_path, read_only=True
+        )
+        name_field = ft.TextField(label="Name", value=suspect.name)
+        age_field = ft.TextField(
+            label="Age", value=str(suspect.age), keyboard_type=ft.KeyboardType.NUMBER
+        )
+        gender_dropdown = ft.Dropdown(
+            label="Gender",
+            value=suspect.gender,
+            options=[
+                ft.dropdown.Option(key=True, text="Male"),
+                ft.dropdown.Option(key=False, text="Female"),
+            ],
+        )
+        note_field = ft.TextField(
+            label="Note (Optional)", value=suspect.note, multiline=True)
+
+        def pick_file_result(e: ft.FilePickerResultEvent):
+            """Handle file picker result."""
+            if e.files:
+                file = e.files[0]
+                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                unique_filename = f"{timestamp}_{uuid.uuid4().hex}_{file.name}"
+                destination_path = os.path.join("img/", unique_filename)
+                shutil.copy(file.path, destination_path)
+                picture_path_field.value = destination_path
+                picture_path_field.update()
+
+        pick_file_dialog = ft.FilePicker(on_result=pick_file_result)
+
+        def handle_update(e):
+            """Handles the update process."""
+            nik = nik_field.value.strip()
+            name = name_field.value.strip()
+            age = age_field.value
+            gender = gender_dropdown.value
+            note = note_field.value.strip()
+            picture_path = picture_path_field.value.strip()
+
+            if not nik or not name or not age or gender is None:
+                # Validate inputs and display errors
+                if not nik:
+                    nik_field.error_text = "NIK is required."
+                if not name:
+                    name_field.error_text = "Name is required."
+                if not age:
+                    age_field.error_text = "Age is required."
+                if gender is None:
+                    gender_dropdown.error_text = "Gender is required."
+                self.page.update()
+                return
+
+            try:
+                age = int(age)
+                if age <= 0:
+                    raise ValueError
+            except ValueError:
+                age_field.error_text = "Age must be a positive number."
+                self.page.update()
+                return
+
+            # Update the suspect details
+            self.controller.update_suspect(
+                suspect_id, nik=nik, picture_path=picture_path, name=name, age=age, gender=gender, note=note
+            )
+            self.render(self.page)
+
+        # Add file picker overlay
+        self.page.overlay.append(pick_file_dialog)
+
+        def go_back(e):
+            """Handles the back button click."""
+            self.render(self.page)
+
+        # Layout for the form
+        self.page.controls.clear()
+        self.page.add(
+            ft.Container(
+                content=ft.Column(
+                    [
+                        nik_field,
+                        ft.Row(
+                            [picture_path_field, ft.ElevatedButton(
+                                "Pick Picture", on_click=lambda _: pick_file_dialog.pick_files(allow_multiple=False))],
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        ),
+                        name_field,
+                        age_field,
+                        gender_dropdown,
+                        note_field,
+                        ft.ElevatedButton("Update Suspect",
+                                          on_click=handle_update),
+                        ft.ElevatedButton(
+                            text="Back",
+                            icon=ft.Icons.ARROW_BACK,
+                            on_click=go_back,
+                        )
+                    ],
+                    expand=True,
+                    width=700,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                padding=10,
+                expand=True,
+                alignment=ft.alignment.center,
+            )
+        )
+        self.page.update()
+
+    def delete_suspect(self, suspect_id):
+        """Deletes a suspect after confirmation."""
+        def confirm_delete(_):
+            """Handles the confirmation dialog response."""
+            self.controller.delete_suspect(suspect_id)
+            self.render(self.page)
+            self.page.close(dlg_modal)
+
+        def cancel_delete(_):
+            """Closes the confirmation dialog without deleting."""
+            self.page.close(dlg_modal)
+
+        # Confirmation dialog
+        dlg_modal = ft.AlertDialog(
+            title=ft.Text("Confirm Deletion"),
+            content=ft.Text(
+                "Are you sure you want to delete this suspect? This action cannot be undone."),
+            actions=[
+                ft.ElevatedButton(
+                    "Yes", on_click=confirm_delete, bgcolor=ft.Colors.RED),
+                ft.ElevatedButton("Cancel", on_click=cancel_delete),
+            ],
+            actions_alignment=ft.MainAxisAlignment.END,
+        )
+        self.page.open(dlg_modal)
         self.page.update()
