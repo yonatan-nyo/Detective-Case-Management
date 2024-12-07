@@ -26,7 +26,7 @@ class SuspectController:
             picturePath=picturePath,
             name=name,
             age=age,
-            gender=gender,
+            gender=bool(gender),
             note=note
         )
         self.db.add(new_suspect)

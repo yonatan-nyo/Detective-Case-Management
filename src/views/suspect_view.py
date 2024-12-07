@@ -1,9 +1,16 @@
+
+import os
+import shutil
+import uuid
+from datetime import datetime
+
 import flet as ft
 from controllers.suspect_controller import SuspectController
 from routes.destinations import destinations
 
 
 def on_navigation_change(page: ft.Page, selected_index: int):
+    page.floating_action_button = None
     """Handles navigation change to display appropriate content."""
     rail = ft.NavigationRail(
         selected_index=selected_index,
@@ -170,6 +177,155 @@ class SuspectView:
                     ),
                 ],
                 expand=True,
+            )
+        )
+
+        # Add FAB for adding a suspect
+        self.page.floating_action_button = ft.FloatingActionButton(
+            icon=ft.Icons.ADD, on_click=lambda e: self.render_add_suspect()
+        )
+        self.page.update()
+
+    def render_add_suspect(self):
+        """Renders the Add Suspect form with unique filenames for uploaded pictures."""
+        # Directory to upload files
+        upload_directory = "img/"
+
+        # Ensure the upload directory exists
+        if not os.path.exists(upload_directory):
+            os.makedirs(upload_directory)
+
+        # File picker logic
+        def pick_file_result(e: ft.FilePickerResultEvent):
+            """Handles the file picker result."""
+            if e.files:
+                # Use the first selected file
+                file = e.files[0]
+
+                # Generate a unique filename
+                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                unique_filename = f"{timestamp}_{uuid.uuid4().hex}_{file.name}"
+                destination_path = os.path.join(
+                    upload_directory, unique_filename)
+
+                # Copy the file to the upload directory
+                shutil.copy(file.path, destination_path)
+
+                # Update the picture path field
+                picture_path_field.value = destination_path
+                picture_path_field.update()
+            else:
+                picture_path_field.value = "No file selected"
+                picture_path_field.update()
+
+        pick_file_dialog = ft.FilePicker(on_result=pick_file_result)
+
+        # Form submission logic
+        def handle_form_submission(e):
+            """Handles form submission for adding a suspect."""
+            # Validate and retrieve input values
+            nik = nik_field.value.strip()
+            if not nik:
+                nik_field.error_text = "NIK is required."
+                self.page.update()
+                return
+
+            picture_path = picture_path_field.value.strip()
+            if not os.path.exists(picture_path):
+                picture_path_field.error_text = "Invalid picture path."
+                self.page.update()
+                return
+
+            name = name_field.value.strip()
+            if not name:
+                name_field.error_text = "Name is required."
+                self.page.update()
+                return
+
+            try:
+                age = int(age_field.value)
+                if age <= 0:
+                    raise ValueError
+            except ValueError:
+                age_field.error_text = "Age must be a positive number."
+                self.page.update()
+                return
+
+            gender = gender_dropdown.value
+            if gender is None:
+                gender_dropdown.error_text = "Gender is required."
+                self.page.update()
+                return
+
+            note = note_field.value.strip()
+
+            # Add the suspect via the controller
+            self.controller.add_suspect(
+                nik, picture_path, name, age, gender, note
+            )
+
+            # After submission, go back to suspect management view
+            self.render(self.page)
+
+        # Form fields
+        nik_field = ft.TextField(label="NIK")
+        picture_path_field = ft.TextField(
+            label="Picture Path", read_only=True, hint_text="Select a picture"
+        )
+        name_field = ft.TextField(label="Name")
+        age_field = ft.TextField(
+            label="Age", keyboard_type=ft.KeyboardType.NUMBER
+        )
+        gender_dropdown = ft.Dropdown(
+            label="Gender",
+            options=[
+                ft.dropdown.Option(key=True, text="Male"),
+                ft.dropdown.Option(key=False, text="Female"),
+            ],
+        )
+        note_field = ft.TextField(label="Note (Optional)", multiline=True)
+
+        # File picker button
+        file_picker_button = ft.ElevatedButton(
+            "Pick Picture",
+            icon=ft.Icons.IMAGE,
+            on_click=lambda _: pick_file_dialog.pick_files(
+                allow_multiple=False, allowed_extensions=["jpg", "jpeg", "png"]
+            )
+        )
+
+        # Submit button
+        submit_button = ft.ElevatedButton(
+            text="Add Suspect", on_click=handle_form_submission
+        )
+
+        # Add file picker to page overlay
+        self.page.overlay.append(pick_file_dialog)
+
+        # Layout and render the form
+        self.page.controls.clear()
+        self.page.add(
+            ft.Container(
+                content=ft.Column(
+                    [
+                        nik_field,
+                        ft.Row(
+                            [picture_path_field, file_picker_button],
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        ),
+                        name_field,
+                        age_field,
+                        gender_dropdown,
+                        note_field,
+                        submit_button,
+                    ],
+                    expand=True,
+                    width=700,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                padding=10,
+                expand=True,
+                alignment=ft.alignment.center,
             )
         )
         self.page.update()
