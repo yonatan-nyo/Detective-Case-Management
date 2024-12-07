@@ -1,6 +1,7 @@
 # views/case_view.py
 import flet as ft
 from controllers.case_controller import CaseController
+import datetime
 
 from routes.destinations import destinations
 
@@ -172,6 +173,117 @@ class CaseView:
                     ),
                 ],
                 expand=True,
+            )
+        )
+
+        def fab_pressed(e):
+            self.render_add_case()
+        self.page.floating_action_button = ft.FloatingActionButton(
+            icon=ft.Icons.ADD, on_click=fab_pressed, bgcolor=ft.Colors.BLUE_GREY_700)
+        self.page.update()
+
+    def render_add_case(self):
+        """Renders the Add Case form with correct data types."""
+
+        # To store the selected date
+        selected_date = ft.TextField(
+            label="Start Date", read_only=True, hint_text="Select a date")
+
+        def handle_date_change(e):
+            """Handles the date selection."""
+            if e.control.value:
+                selected_date.value = e.control.value.strftime("%Y-%m-%d")
+                self.page.update()
+
+        def button_clicked(e):
+            """Handles form submission."""
+            # Get progress as integer from dropdown
+            try:
+                progress = int(progress_field.value)
+            except (ValueError, TypeError):
+                progress_field.error_text = "Please select a valid progress."
+                self.page.update()
+                return
+
+            # Validate selected date
+            if not selected_date.value:
+                selected_date.error_text = "Please select a valid date."
+                self.page.update()
+                return
+            try:
+                start_date = datetime.datetime.strptime(
+                    selected_date.value, "%Y-%m-%d")
+            except ValueError:
+                selected_date.error_text = "Invalid date format (expected YYYY-MM-DD)."
+                self.page.update()
+                return
+
+            # Get other fields
+            description = description_field.value
+            detective = detective_field.value
+
+            # Validate description
+            if not description.strip():
+                description_field.error_text = "Description cannot be empty."
+                self.page.update()
+                return
+
+            # Add the new case using the controller
+            self.controller.add_case(
+                progress, start_date, description, detective)
+
+            # After submitting, render the case management view again
+            self.render(self.page)
+
+        # Create form fields
+        progress_field = ft.Dropdown(
+            label="Progress",
+            options=[
+                ft.dropdown.Option(key=0, text="On-going"),
+                ft.dropdown.Option(key=1, text="Solved"),
+                ft.dropdown.Option(key=2, text="Unsolved"),
+            ],
+        )
+        date_picker_button = ft.ElevatedButton(
+            "Pick Date",
+            icon=ft.Icons.CALENDAR_MONTH,
+            on_click=lambda e: self.page.open(
+                ft.DatePicker(
+                    first_date=datetime.datetime(2023, 1, 1),
+                    last_date=datetime.datetime(2024, 12, 31),
+                    on_change=handle_date_change,
+                )
+            ),
+        )
+        description_field = ft.TextField(label="Description", multiline=True)
+        detective_field = ft.TextField(label="Detective")
+
+        # Submit button
+        submit_button = ft.ElevatedButton(
+            text="Add Case",
+            on_click=button_clicked,
+        )
+
+        # Add the form fields and buttons to the page
+        self.page.controls.clear()
+        self.page.add(
+            ft.Container(
+                content=ft.Column(
+                    [
+                        progress_field,
+                        ft.Row([selected_date, date_picker_button],
+                               alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
+                        description_field,
+                        detective_field,
+                        submit_button,
+                    ],
+                    width=700,
+                    expand=True,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                padding=10,
+                expand=True,
+                alignment=ft.alignment.center,
             )
         )
         self.page.update()

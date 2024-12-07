@@ -1,7 +1,5 @@
 import flet as ft
 
-selected_index = 0
-
 destinations = [
     ft.NavigationRailDestination(
         icon=ft.Icons.PERSON_OUTLINED,
