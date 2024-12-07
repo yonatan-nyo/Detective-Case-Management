@@ -10,6 +10,7 @@ from routes.destinations import destinations
 
 
 def on_navigation_change(page: ft.Page, selected_index: int):
+    page.floating_action_button = None
     """Handles navigation change to display appropriate content."""
     rail = ft.NavigationRail(
         selected_index=selected_index,

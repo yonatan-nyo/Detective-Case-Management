@@ -1,9 +1,14 @@
+import os
+import shutil
+import uuid
+from datetime import datetime
 import flet as ft
 from controllers.victim_controller import VictimController
 from routes.destinations import destinations
 
 
 def on_navigation_change(page: ft.Page, selected_index: int):
+    page.floating_action_button = None
     """Handles navigation change to display appropriate content."""
     rail = ft.NavigationRail(
         selected_index=selected_index,
@@ -169,6 +174,144 @@ class VictimView:
                     ),
                 ],
                 expand=True,
+            )
+        )
+
+        self.page.floating_action_button = ft.FloatingActionButton(
+            icon=ft.Icons.ADD, on_click=lambda e: self.render_add_victim()
+        )
+
+        self.page.update()
+
+    def render_add_victim(self):
+        """Renders the Add Victim form with unique filenames for uploaded pictures."""
+        # Directory to upload files
+        upload_directory = "img/"
+
+        # Ensure the upload directory exists
+        if not os.path.exists(upload_directory):
+            os.makedirs(upload_directory)
+
+        # File picker logic
+        def pick_file_result(e: ft.FilePickerResultEvent):
+            """Handles the file picker result."""
+            if e.files:
+                # Use the first selected file
+                file = e.files[0]
+
+                # Generate a unique filename
+                timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+                unique_filename = f"{timestamp}_{uuid.uuid4().hex}_{file.name}"
+                destination_path = os.path.join(
+                    upload_directory, unique_filename)
+
+                # Copy the file to the upload directory
+                shutil.copy(file.path, destination_path)
+
+                # Update the picture path field
+                picture_path_field.value = destination_path
+                picture_path_field.update()
+            else:
+                picture_path_field.value = "No file selected"
+                picture_path_field.update()
+
+        pick_file_dialog = ft.FilePicker(on_result=pick_file_result)
+
+        # Form submission logic
+        def handle_form_submission(e):
+            """Handles form submission for adding a victim."""
+            # Validate and retrieve input values
+            nik = nik_field.value.strip()
+            if not nik:
+                nik_field.error_text = "NIK is required."
+                self.page.update()
+                return
+
+            picture_path = picture_path_field.value.strip()
+            if not os.path.exists(picture_path):
+                picture_path_field.error_text = "Invalid picture path."
+                self.page.update()
+                return
+
+            name = name_field.value.strip()
+            if not name:
+                name_field.error_text = "Name is required."
+                self.page.update()
+                return
+
+            try:
+                age = int(age_field.value)
+                if age <= 0:
+                    raise ValueError
+            except ValueError:
+                age_field.error_text = "Age must be a positive number."
+                self.page.update()
+                return
+
+            forensic_result = forensic_result_field.value.strip()
+            if not forensic_result:
+                forensic_result_field.error_text = "Forensic result is required."
+                self.page.update()
+                return
+
+            # Add the victim via the controller
+            self.controller.add_victim(
+                nik, picture_path, name, age, forensic_result)
+
+            # After submission, go back to victim management view
+            self.render(self.page)
+
+        # Form fields
+        nik_field = ft.TextField(label="NIK")
+        picture_path_field = ft.TextField(
+            label="Picture Path", read_only=True, hint_text="Select a picture"
+        )
+        name_field = ft.TextField(label="Name")
+        age_field = ft.TextField(
+            label="Age", keyboard_type=ft.KeyboardType.NUMBER
+        )
+        forensic_result_field = ft.TextField(label="Forensic Result")
+
+        # File picker button
+        file_picker_button = ft.ElevatedButton(
+            "Pick Picture",
+            icon=ft.Icons.IMAGE,
+            on_click=lambda _: pick_file_dialog.pick_files(
+                allow_multiple=False, allowed_extensions=["jpg", "jpeg", "png"]
+            )
+        )
+
+        # Submit button
+        submit_button = ft.ElevatedButton(
+            text="Add Victim", on_click=handle_form_submission
+        )
+
+        # Add file picker to page overlay
+        self.page.overlay.append(pick_file_dialog)
+
+        # Layout and render the form
+        self.page.controls.clear()
+        self.page.add(
+            ft.Container(
+                content=ft.Column(
+                    [
+                        nik_field,
+                        ft.Row(
+                            [picture_path_field, file_picker_button],
+                            alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        ),
+                        name_field,
+                        age_field,
+                        forensic_result_field,
+                        submit_button,
+                    ],
+                    expand=True,
+                    width=700,
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                padding=10,
+                expand=True,
+                alignment=ft.alignment.center,
             )
         )
         self.page.update()
