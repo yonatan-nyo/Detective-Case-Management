@@ -10,7 +10,7 @@ class Suspect(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     nik = Column(String, nullable=False)
-    picturePath = Column(String, nullable=False)
+    picture_path = Column(String, nullable=False)
     name = Column(String, nullable=False)
 
     age = Column(Integer, nullable=False)
