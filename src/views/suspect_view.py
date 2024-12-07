@@ -19,7 +19,7 @@ def on_navigation_change(page: ft.Page, selected_index: int):
         from views.case_view import CaseView
         CaseView().render(page)
     elif selected_index == 1:
-        pass
+        SuspectView().render(page)
     elif selected_index == 2:
         from views.victim_view import VictimView
         VictimView().render(page)

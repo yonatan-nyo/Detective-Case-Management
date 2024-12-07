@@ -22,7 +22,7 @@ def on_navigation_change(page: ft.Page, selected_index: int):
         from views.suspect_view import SuspectView
         SuspectView().render(page)
     elif selected_index == 2:
-        pass
+        VictimView().render(page)
     else:
         page.controls.clear()
         page.add(
