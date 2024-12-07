@@ -10,11 +10,11 @@ class Victim(Base):
     id = Column(Integer, primary_key=True, index=True)
 
     nik = Column(String, nullable=False)
-    picturePath = Column(String, nullable=False)
+    picture_path = Column(String, nullable=False)
     name = Column(String, nullable=False)
 
     age = Column(Integer, nullable=False)
-    forensicResult = Column(Text, nullable=False)
+    forensic_result = Column(Text, nullable=False)
 
     cases = relationship('Case', secondary=CaseVictim,
                          back_populates='victims')

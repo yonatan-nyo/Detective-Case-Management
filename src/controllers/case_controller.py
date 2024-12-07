@@ -10,6 +10,10 @@ class CaseController:
     def get_all_cases(self):
         return self.db.query(Case).all()
 
+    def get_case_by_id(self, case_id):
+        """Retrieves a case by its ID."""
+        return self.db.query(Case).filter(Case.id == case_id).first()
+
     def get_all_cases_pagination(self, page: int = 1, per_page: int = 10):
         offset = (page - 1) * per_page
         cases = self.db.query(Case).offset(offset).limit(per_page).all()

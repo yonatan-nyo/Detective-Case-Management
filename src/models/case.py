@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text
+from sqlalchemy import Column, Integer, String, Text, Date
 from sqlalchemy.orm import relationship
 from .case_victim import CaseVictim
 from .case_suspect import CaseSuspect
@@ -10,7 +10,7 @@ class Case(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     progress = Column(Integer, nullable=False)
-    startDate = Column(DateTime, nullable=False)
+    startDate = Column(Date, nullable=False)
     description = Column(Text, nullable=False)
     detective = Column(String, nullable=True)
 
