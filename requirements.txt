@@ -1,8 +1,16 @@
+astroid==3.3.5
+colorama==0.4.6
+dill==0.3.9
 greenlet==3.1.1
+isort==5.13.2
+mccabe==0.7.0
+platformdirs==4.3.6
 psycopg2==2.9.10
+pylint==3.3.2
 PyQt6==6.7.1
 PyQt6-Qt6==6.7.3
 PyQt6_sip==13.8.0
 python-dotenv==1.0.1
 SQLAlchemy==2.0.36
+tomlkit==0.13.2
 typing_extensions==4.12.2
