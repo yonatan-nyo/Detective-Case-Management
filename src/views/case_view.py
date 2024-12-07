@@ -19,7 +19,7 @@ def on_navigation_change(page: ft.Page, selected_index: int):
             page, e.control.selected_index),
     )
     if selected_index == 0:
-        pass
+        CaseView().render(page)
     elif selected_index == 1:
         from views.suspect_view import SuspectView
         SuspectView().render(page)
