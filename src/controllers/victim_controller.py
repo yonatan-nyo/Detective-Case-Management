@@ -5,8 +5,8 @@ from models.case import Case
 
 
 class VictimController:
-    def _init_(self):
-        self.db = SessionLocal()
+    def __init__(self):
+        self.db = SessionLocal()  # Initialize the database session here
 
     def get_all_victims(self):
         """Get all victims."""

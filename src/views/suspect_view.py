@@ -19,7 +19,7 @@ def on_navigation_change(page: ft.Page, selected_index: int):
         from views.case_view import CaseView
         CaseView().render(page)
     elif selected_index == 1:
-        SuspectView().render(page)
+        pass
     elif selected_index == 2:
         from views.victim_view import VictimView
         VictimView().render(page)
@@ -66,7 +66,7 @@ class SuspectView:
                 e.control.bgcolor = "black" if e.data == "true" else ft.Colors.BLACK54
                 e.control.update()
 
-            def on_tap_down(e: ft.ContainerTapEvent, idx=_idx):
+            def on_tap_down(_e: ft.ContainerTapEvent, idx=_idx):
                 print("Suspect tapped:", idx)
 
             suspect_card = (
@@ -119,13 +119,13 @@ class SuspectView:
             alignment=ft.MainAxisAlignment.CENTER,
         )
 
-    def previous_page(self, e):
+    def previous_page(self, _e):
         """Handles the Previous button click."""
         if self.page_number > 1:
             self.page_number -= 1
             self.render(self.page)
 
-    def next_page(self, e):
+    def next_page(self, _e):
         """Handles the Next button click."""
         if self.page_number < self.total_pages:
             self.page_number += 1
