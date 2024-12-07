@@ -52,11 +52,14 @@ class CaseView:
         self.page_number = 1
         self.per_page = 12
         self.total_pages = 1  # Initialize total pages
+        self.filter_progress = None
 
     def fetch_cases(self):
-        """Fetches cases for the current page."""
+        """Fetches cases for the current page with optional filtering."""
         pagination_data = self.controller.get_all_cases_pagination(
-            page=self.page_number, per_page=self.per_page
+            page=self.page_number,
+            per_page=self.per_page,
+            filter_by=self.filter_progress,  # Pass the filter
         )
         self.total_pages = pagination_data["total_pages"]
         return pagination_data["cases"]
@@ -132,6 +135,34 @@ class CaseView:
             self.page_number += 1
             self.render(self.page)
 
+    def dropdown_changed(self, e):
+        """Handles dropdown change to filter cases."""
+        filter_mapping = {
+            "Solved": 0,
+            "Unsolved": 1,
+            "Ongoing": 2,
+            "Remove Filter": None,
+        }
+        self.filter_progress = filter_mapping.get(e.control.value, None)
+        self.page_number = 1  # Reset to the first page
+        self.render(self.page)  # Re-render with the updated filter
+
+    def build_dropdown(self):
+        """Builds the dropdown for filtering cases."""
+        return ft.Dropdown(
+            hint_text="Filter Cases",
+            options=[
+                ft.dropdown.Option("Solved"),
+                ft.dropdown.Option("Unsolved"),
+                ft.dropdown.Option("Ongoing"),
+                ft.dropdown.Option("Remove Filter"),
+            ],
+            alignment=ft.MainAxisAlignment.START,
+            autofocus=True,
+            width=150,
+            on_change=self.dropdown_changed,  # Connect to the filter logic
+        )
+    
     def render(self, page: ft.Page):
         """Renders the case management view."""
         self.page = page
@@ -162,6 +193,7 @@ class CaseView:
                                 padding=10,
                                 alignment=ft.alignment.center,
                             ),
+                            self.build_dropdown(),
                             ft.Column(
                                 [self.build_cases_component(cases)],
                                 expand=True,
