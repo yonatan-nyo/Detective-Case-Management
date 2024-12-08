@@ -22,11 +22,11 @@ class SuspectController:
             return case.suspects  # Assuming suspects is a relationship in the Case model
         return []
 
-    def add_suspect(self, nik, picturePath, name, age, gender, note):
+    def add_suspect(self, nik, picture_path, name, age, gender, note):
         """Add a new suspect."""
         new_suspect = Suspect(
             nik=nik,
-            picturePath=picturePath,
+            picture_path=picture_path,
             name=name,
             age=age,
             gender=(gender == "True"),
@@ -37,15 +37,15 @@ class SuspectController:
         self.db.refresh(new_suspect)
         return new_suspect
 
-    def update_suspect(self, suspect_id, nik=None, picturePath=None, name=None, age=None, gender=None, note=None):
+    def update_suspect(self, suspect_id, nik=None, picture_path=None, name=None, age=None, gender=None, note=None):
         """Update details of an existing suspect."""
         suspect = self.db.query(Suspect).filter(
             Suspect.id == suspect_id).first()
         if suspect:
             if nik:
                 suspect.nik = nik
-            if picturePath:
-                suspect.picturePath = picturePath
+            if picture_path:
+                suspect.picture_path = picture_path
             if name:
                 suspect.name = name
             if age:
