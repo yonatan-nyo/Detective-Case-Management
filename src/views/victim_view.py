@@ -169,11 +169,7 @@ class VictimView:
             search_results.controls.clear()
 
             # Perform search via the controller
-            results = []
-            if name:
-                results.extend(self.controller.search_victims_by_name(name))
-            if nik:
-                results.extend(self.controller.search_victims_by_nik(nik))
+            results = self.controller.search_victims(name, nik)
 
             if results:
                 search_results.controls.append(self.build_victims_component(results))
