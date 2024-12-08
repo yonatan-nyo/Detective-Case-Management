@@ -2,7 +2,8 @@
 import flet as ft
 from controllers.case_controller import CaseController
 from datetime import date
-
+import os
+from fpdf import FPDF
 from routes.destinations import destinations
 
 
@@ -393,123 +394,204 @@ class CaseView:
             """Handles the assign victims button click."""
             self.render_assign_victims(case)
 
+        def download_report(e):
+            """Handles the download report button click."""
+            case = self.controller.get_case_by_id(case_id)
+            if case:
+                # Buat dialog untuk memilih lokasi penyimpanan
+                file_picker = ft.FilePicker(
+                    on_result=lambda e: handle_file_pick(e, case)
+                )
+                self.page.overlay.append(file_picker)
+                self.page.update()
+                file_picker.save_file(
+                    dialog_title="Simpan Laporan Kasus",
+                    file_name=f"laporan_kasus_{case_id}.pdf"
+                )
+        
+        def handle_file_pick(e, case):
+            """Proses generate PDF setelah memilih lokasi"""
+            if e.path:
+                try:
+                    generate_case_report(case, e.path)
+                    self.page.show_snack_bar(
+                        ft.SnackBar(content=ft.Text("Laporan berhasil dibuat!"))
+                    )
+                except Exception as ex:
+                    self.page.show_snack_bar(
+                        ft.SnackBar(content=ft.Text(f"Gagal membuat laporan: {str(ex)}"))
+                    )
+                    
+        def generate_case_report(case, filename):
+            """Generates a PDF report for the given case."""
+            pdf = FPDF()
+            pdf.add_page()
+            pdf.set_font("Arial", size=12)
+            
+            # Judul
+            pdf.set_font("Arial", style="B", size=16)
+            pdf.cell(0, 10, "Laporan Kasus", ln=True, align="C")
+            pdf.ln(10)
+            
+            # Informasi Kasus
+            pdf.set_font("Arial", style="B", size=12)
+            pdf.cell(0, 10, "Informasi Kasus", ln=True)
+            
+            pdf.set_font("Arial", size=12)
+            case_details = [
+                ("Case ID", str(case.id)),
+                ("Progress", case.progress),
+                ("Start Date", str(case.startDate).split(' ')[0]),
+                ("Detective", case.detective if case.detective else "-"),
+                ("Priority", case.priority if case.priority else "-")
+            ]
+            
+            # Menambahkan detail kasus
+            for label, value in case_details:
+                pdf.cell(60, 10, f"{label}:", 0, 0)
+                pdf.cell(0, 10, str(value), ln=True)
+            
+            # Deskripsi Kasus
+            pdf.ln(5)
+            pdf.set_font("Arial", 'B', 12)
+            pdf.cell(0, 10, "Deskripsi Kasus", ln=True)
+            pdf.set_font("Arial", size=12)
+            pdf.multi_cell(0, 10, case.description)
+            
+            # Tersangka
+            if case.suspects:
+                pdf.ln(5)
+                pdf.set_font("Arial", 'B', 12)
+                pdf.cell(0, 10, "Daftar Tersangka", ln=True)
+                pdf.set_font("Arial", size=12)
+                for suspect in case.suspects:
+                    pdf.cell(0, 10, f"- {suspect.name}", ln=True)
+            
+            # Korban
+            if case.victims:
+                pdf.ln(5)
+                pdf.set_font("Arial", 'B', 12)
+                pdf.cell(0, 10, "Daftar Korban", ln=True)
+                pdf.set_font("Arial", size=12)
+                for victim in case.victims:
+                    pdf.cell(0, 10, f"- {victim.name}", ln=True)
+            
+            # Menyimpan PDF
+            pdf.output(filename)
+        
+        
         # Display case details
         self.page.controls.clear()
         self.page.add(
             ft.Container(
-                content=ft.Column(
+            content=ft.Column(
+                [
+                ft.Text("Case Details", size=24, weight="bold"),
+                ft.Row(
                     [
-                        ft.Text("Case Details", size=24, weight="bold"),
-                        ft.Row(
-                            [
-                                ft.Text("Case ID:", size=16, weight="bold"),
-                                ft.Text(case.id, size=16),
-                            ]
-                        ),
-                        ft.Row(
-                            [
-                                ft.Text("Progress:", size=16, weight="bold"),
-                                ft.Text(case.progress, size=16),
-                            ]
-                        ),
-                        ft.Row(
-                            [
-                                ft.Text("Start Date:", size=16, weight="bold"),
-                                ft.Text(str(case.startDate).split(
-                                    ' ')[0], size=16),
-                            ]
-                        ),
-                        ft.Row(
-                            [
-                                ft.Text("Detective:", size=16, weight="bold"),
-                                ft.Text("-", size=16)
-                                if case.detective is None
-                                else ft.Text(case.detective, size=16)
-                            ]
-                        ),
-                        ft.Row(
-                            [
-                                ft.Text("Priority:", size=16, weight="bold"),
-                                ft.Text("-", size=16)
-                                if case.priority is None
-                                else ft.Text(case.priority, size=16)
-                            ]
-                        ),
-                        ft.Row(
-                            [
-                                ft.Text("Suspects:", size=16, weight="bold"),
-                                ft.Column(
-                                    [
-                                        ft.Text(
-                                            "No suspects assigned.", size=16)
-                                        if not case.suspects
-                                        else ft.Column(
-                                            [ft.Text(suspect.name, size=16)
-                                             for suspect in case.suspects]
-                                        )
-                                    ]
-                                ),
-                            ]
-                        ),
-                        ft.Row(
-                            [
-                                ft.Text("Victims:", size=16, weight="bold"),
-                                ft.Column(
-                                    [
-                                        ft.Text("No victim assigned.", size=16)
-                                        if not case.victims
-                                        else ft.Column(
-                                            [ft.Text(victim.name, size=16)
-                                             for victim in case.victims]
-                                        )
-                                    ]
-                                ),
-                            ]
-                        ),
-                        ft.Container(
-                            content=ft.Text(
-                                f"Description:\n{case.description}",
-                                size=16,
-                                weight="normal",
-                            ),
-                            padding=10,
-                        ),
-                        ft.Row(
-                            [
-                                ft.ElevatedButton(
-                                    text="Update",
-                                    icon=ft.Icons.EDIT,
-                                    on_click=update_case,
-                                ),
-                                ft.ElevatedButton(
-                                    text="Delete",
-                                    icon=ft.Icons.DELETE,
-                                    on_click=delete_case,
-                                    bgcolor=ft.Colors.RED_600,
-                                ),
-                                ft.ElevatedButton(
-                                    text="Assign Suspects",
-                                    icon=ft.Icons.PERSON_ADD,
-                                    on_click=assign_suspects,
-                                ),
-                                ft.ElevatedButton(
-                                    text="Assign Victims",
-                                    icon=ft.Icons.PERSON_ADD,
-                                    on_click=assign_victims,
-                                ),
-                            ],
-                            alignment=ft.MainAxisAlignment.CENTER,
-                        ),
-                        ft.ElevatedButton(
-                            text="Back",
-                            icon=ft.Icons.ARROW_BACK,
-                            on_click=go_back,
-                        ),
-                    ],
-                    expand=True,
+                    ft.Text("Case ID:", size=16, weight="bold"),
+                    ft.Text(case.id, size=16),
+                    ]
                 ),
-                padding=20,
-                alignment=ft.alignment.center,
+                ft.Row(
+                    [
+                    ft.Text("Progress:", size=16, weight="bold"),
+                    ft.Text(case.progress, size=16),
+                    ]
+                ),
+                ft.Row(
+                    [
+                    ft.Text("Start Date:", size=16, weight="bold"),
+                    ft.Text(str(case.startDate).split(
+                        ' ')[0], size=16),
+                    ]
+                ),
+                ft.Row(
+                    [
+                    ft.Text("Detective:", size=16, weight="bold"),
+                    ft.Text("-", size=16)
+                    if case.detective is None
+                    else ft.Text(case.detective, size=16)
+                    ]
+                ),
+                ft.Row(
+                    [
+                    ft.Text("Priority:", size=16, weight="bold"),
+                    ft.Text("-", size=16)
+                    if case.priority is None
+                    else ft.Text(case.priority, size=16)
+                    ]
+                ),
+                ft.Row(
+                    [
+                    ft.Text("Suspects:", size=16, weight="bold"),
+                    ft.Text(
+                        "No suspects assigned.", size=16)
+                    if not case.suspects
+                    else ft.Text(
+                        ", ".join([suspect.name for suspect in case.suspects]), size=16
+                    )
+                    ]
+                ),
+                ft.Row(
+                    [
+                    ft.Text("Victims:", size=16, weight="bold"),
+                    ft.Text("No victim assigned.", size=16)
+                    if not case.victims
+                    else ft.Text(
+                        ", ".join([victim.name for victim in case.victims]), size=16
+                    )
+                    ]
+                ),
+                ft.Container(
+                    content=ft.Text(
+                    f"Description:\n{case.description}",
+                    size=16,
+                    weight="normal",
+                    ),
+                    padding=10,
+                ),
+                ft.Row(
+                    [
+                    ft.ElevatedButton(
+                        text="Update",
+                        icon=ft.Icons.EDIT,
+                        on_click=update_case,
+                    ),
+                    ft.ElevatedButton(
+                        text="Delete",
+                        icon=ft.Icons.DELETE,
+                        on_click=delete_case,
+                        bgcolor=ft.Colors.RED_600,
+                    ),
+                    ft.ElevatedButton(
+                        text="Assign Suspects",
+                        icon=ft.Icons.PERSON_ADD,
+                        on_click=assign_suspects,
+                    ),
+                    ft.ElevatedButton(
+                        text="Assign Victims",
+                        icon=ft.Icons.PERSON_ADD,
+                        on_click=assign_victims,
+                    ),
+                    ],
+                    alignment=ft.MainAxisAlignment.CENTER,
+                ),
+                ft.ElevatedButton(
+                    text="Back",
+                    icon=ft.Icons.ARROW_BACK,
+                    on_click=go_back,
+                ),
+                ft.ElevatedButton(
+                    text="Download Report",
+                    icon=ft.Icons.DOWNLOAD,
+                    on_click=download_report,
+                ),
+                ],
+                expand=True,
+            ),
+            padding=20,
+            alignment=ft.alignment.center,
             )
         )
         self.page.update()
@@ -785,3 +867,4 @@ class CaseView:
         self.controller.remove_victim_from_case(case.id, victim.id)
         # Re-render the assign victims view
         self.render_assign_victims(case)
+
