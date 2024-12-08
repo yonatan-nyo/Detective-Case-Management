@@ -79,25 +79,83 @@ class SuspectView:
             def on_tap_down(_e: ft.ContainerTapEvent, idx=_idx):
                 self.render_suspect_detail(suspects[idx].id)
 
-            suspect_card = (
-                ft.Container(
-                    content=ft.Column(
-                        [
-                            ft.Text(f"NIK: {suspect.nik}", size=12),
-                            ft.Text(f"Name: {suspect.name}", size=14),
-                            ft.Text(f"Age: {suspect.age}", size=12),
-                            ft.Text(
-                                f"Gender: {'Male' if suspect.gender else 'Female'}", size=12),
-                            ft.Text(f"Note: {suspect.note}", size=12),
-                        ],
-                        alignment=ft.MainAxisAlignment.START,
-                    ),
-                    bgcolor=ft.Colors.BLACK54,
-                    on_hover=on_hover,
-                    on_tap_down=lambda e, idx=_idx: on_tap_down(e, idx),
-                    padding=10,
-                    expand=False,
-                )
+            suspect_card = ft.Container(
+                content=ft.Column(
+                    [
+                        ft.Row(
+                            [
+                                # Picture of the suspect
+                                ft.Container(
+                                    content=ft.Image(
+                                        src=suspect.picture_path,  # Assuming the path is valid
+                                        width=80,
+                                        height=80,
+                                        fit=ft.ImageFit.COVER,
+                                    ),
+                                    border_radius=5,
+                                    bgcolor=ft.Colors.GREY_800,
+                                    margin=2,
+                                ),
+                                # Suspect details
+                                ft.Column(
+                                    [
+                                        ft.Row(
+                                            [
+                                                ft.Text(
+                                                    "NIK: ", weight=ft.FontWeight.BOLD),
+                                                ft.Text(suspect.nik),
+                                            ],
+                                            alignment=ft.MainAxisAlignment.START,
+                                        ),
+                                        ft.Row(
+                                            [
+                                                ft.Text(
+                                                    "Name: ", weight=ft.FontWeight.BOLD),
+                                                ft.Text(suspect.name),
+                                            ],
+                                            alignment=ft.MainAxisAlignment.START,
+                                        ),
+                                        ft.Row(
+                                            [
+                                                ft.Text(
+                                                    "Age: ", weight=ft.FontWeight.BOLD),
+                                                ft.Text(str(suspect.age)),
+                                            ],
+                                            alignment=ft.MainAxisAlignment.START,
+                                        ),
+                                        ft.Row(
+                                            [
+                                                ft.Text(
+                                                    "Gender: ", weight=ft.FontWeight.BOLD),
+                                                ft.Text(
+                                                    "Male" if suspect.gender else "Female"),
+                                            ],
+                                            alignment=ft.MainAxisAlignment.START,
+                                        ),
+
+                                    ],
+                                    spacing=2,
+                                    alignment=ft.MainAxisAlignment.START,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.START,
+                            spacing=6,
+                        ),
+                        ft.Container(
+                            content=ft.Text(
+                                f"Note: {suspect.note}",
+                                max_lines=3,
+                                overflow=ft.TextOverflow.ELLIPSIS,
+                                style=ft.TextStyle(
+                                    size=12, color=ft.Colors.GREY_400),
+                            ),
+                        ),
+                    ]),
+                border_radius=8,
+                bgcolor=ft.Colors.BLACK54,
+                padding=10,
+                on_hover=on_hover,
+                on_tap_down=lambda e, idx=_idx: on_tap_down(e, idx),
             )
 
             temp_row.append(
