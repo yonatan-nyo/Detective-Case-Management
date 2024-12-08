@@ -1,7 +1,7 @@
 # controllers/case_controller.py
 from models.case import Case
 from models.database import SessionLocal
-
+from models.suspect import Suspect
 
 class CaseController:
     def __init__(self):
@@ -48,3 +48,39 @@ class CaseController:
             case.detective = detective
             self.db.commit()
             self.db.refresh(case)
+
+    def get_unassigned_suspects(self, case_id):
+        """Retrieve suspects not yet assigned to this case."""
+        case = self.get_case_by_id(case_id)
+    
+        if not case:
+            return []
+        
+        # Get IDs of suspects already assigned to this case
+        assigned_suspect_ids = [suspect.id for suspect in case.suspects]
+        
+        # If no suspects are assigned, return all suspects
+        if not assigned_suspect_ids:
+            return self.db.query(Suspect).all()
+        
+        # Return suspects not in the assigned list
+        return self.db.query(Suspect).filter(Suspect.id.notin_(assigned_suspect_ids)).all()
+
+    def assign_suspect_to_case(self, case_id, suspect_id):
+        """Assign a suspect to a specific case."""
+        case = self.get_case_by_id(case_id)
+        suspect = self.db.query(Suspect).filter(Suspect.id == suspect_id).first()
+        
+        if case and suspect:
+            case.suspects.append(suspect)
+            self.db.commit()
+
+    def remove_suspect_from_case(self, case_id, suspect_id):
+        """Remove a suspect from a specific case."""
+        case = self.get_case_by_id(case_id)
+        suspect = self.db.query(Suspect).filter(Suspect.id == suspect_id).first()
+        
+        if case and suspect:
+            case.suspects.remove(suspect)
+            self.db.commit()
+            

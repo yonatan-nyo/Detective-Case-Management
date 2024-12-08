@@ -215,11 +215,11 @@ class SuspectView:
                 shutil.copy(file.path, destination_path)
 
                 # Update the picture path field
-                picture_path_field.value = destination_path
-                picture_path_field.update()
+                picturePath_field.value = destination_path
+                picturePath_field.update()
             else:
-                picture_path_field.value = "No file selected"
-                picture_path_field.update()
+                picturePath_field.value = "No file selected"
+                picturePath_field.update()
 
         pick_file_dialog = ft.FilePicker(on_result=pick_file_result)
 
@@ -233,9 +233,9 @@ class SuspectView:
                 self.page.update()
                 return
 
-            picture_path = picture_path_field.value.strip()
-            if not os.path.exists(picture_path):
-                picture_path_field.error_text = "Invalid picture path."
+            picturePath = picturePath_field.value.strip()
+            if not os.path.exists(picturePath):
+                picturePath_field.error_text = "Invalid picture path."
                 self.page.update()
                 return
 
@@ -264,7 +264,7 @@ class SuspectView:
 
             # Add the suspect via the controller
             self.controller.add_suspect(
-                nik, picture_path, name, age, gender, note
+                nik, picturePath, name, age, gender, note
             )
 
             # After submission, go back to suspect management view
@@ -272,7 +272,7 @@ class SuspectView:
 
         # Form fields
         nik_field = ft.TextField(label="NIK")
-        picture_path_field = ft.TextField(
+        picturePath_field = ft.TextField(
             label="Picture Path", read_only=True, hint_text="Select a picture"
         )
         name_field = ft.TextField(label="Name")
@@ -317,7 +317,7 @@ class SuspectView:
                     [
                         nik_field,
                         ft.Row(
-                            [picture_path_field, file_picker_button],
+                            [picturePath_field, file_picker_button],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         ),
                         name_field,
@@ -373,13 +373,17 @@ class SuspectView:
                 ft.Text(
                     f"Gender: {'Male' if suspect.gender else 'Female'}", size=18
                 ),
+                ft.Text(
+                    f"Cases: {', '.join([str(case.id) for case in suspect.cases])}" if suspect.cases else "Cases: None",
+                    size=18
+                ),
                 ft.Text(f"Note: {suspect.note or 'N/A'}", size=18),
                 ft.Image(
-                    src=suspect.picture_path,
+                    src=suspect.picturePath,
                     width=300,
                     height=300,
                     fit=ft.ImageFit.CONTAIN,
-                ) if suspect.picture_path and os.path.exists(suspect.picture_path)
+                ) if suspect.picturePath and os.path.exists(suspect.picturePath)
                 else ft.Text("No Picture Available", size=16),
                 ft.Row(
                     [
@@ -441,8 +445,8 @@ class SuspectView:
 
         # Prepopulate fields with suspect data
         nik_field = ft.TextField(label="NIK", value=suspect.nik)
-        picture_path_field = ft.TextField(
-            label="Picture Path", value=suspect.picture_path, read_only=True
+        picturePath_field = ft.TextField(
+            label="Picture Path", value=suspect.picturePath, read_only=True
         )
         name_field = ft.TextField(label="Name", value=suspect.name)
         age_field = ft.TextField(
@@ -467,8 +471,8 @@ class SuspectView:
                 unique_filename = f"{timestamp}_{uuid.uuid4().hex}_{file.name}"
                 destination_path = os.path.join("img/", unique_filename)
                 shutil.copy(file.path, destination_path)
-                picture_path_field.value = destination_path
-                picture_path_field.update()
+                picturePath_field.value = destination_path
+                picturePath_field.update()
 
         pick_file_dialog = ft.FilePicker(on_result=pick_file_result)
 
@@ -479,7 +483,7 @@ class SuspectView:
             age = age_field.value
             gender = gender_dropdown.value
             note = note_field.value.strip()
-            picture_path = picture_path_field.value.strip()
+            picturePath = picturePath_field.value.strip()
 
             if not nik or not name or not age or gender is None:
                 # Validate inputs and display errors
@@ -505,7 +509,7 @@ class SuspectView:
 
             # Update the suspect details
             self.controller.update_suspect(
-                suspect_id, nik=nik, picture_path=picture_path, name=name, age=age, gender=gender, note=note
+                suspect_id, nik=nik, picturePath=picturePath, name=name, age=age, gender=gender, note=note
             )
             self.render(self.page)
 
@@ -524,7 +528,7 @@ class SuspectView:
                     [
                         nik_field,
                         ft.Row(
-                            [picture_path_field, ft.ElevatedButton(
+                            [picturePath_field, ft.ElevatedButton(
                                 "Pick Picture", on_click=lambda _: pick_file_dialog.pick_files(allow_multiple=False))],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         ),
