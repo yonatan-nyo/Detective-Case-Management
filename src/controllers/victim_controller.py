@@ -23,34 +23,34 @@ class VictimController:
             return case.victims  # Assuming victims is a relationship in the Case model
         return []
 
-    def add_victim(self, nik, picture_path, name, age, forensic_result):
+    def add_victim(self, nik, picturePath, name, age, forensicResult):
         """Add a new victim."""
         new_victim = Victim(
             nik=nik,
-            picture_path=picture_path,
+            picturePath=picturePath,
             name=name,
             age=age,
-            forensic_result=forensic_result
+            forensicResult=forensicResult
         )
         self.db.add(new_victim)
         self.db.commit()
         self.db.refresh(new_victim)
         return new_victim
 
-    def update_victim(self, victim_id, nik=None, picture_path=None, name=None, age=None, forensic_result=None):
+    def update_victim(self, victim_id, nik=None, picturePath=None, name=None, age=None, forensicResult=None):
         """Update details of an existing victim."""
         victim = self.db.query(Victim).filter(Victim.id == victim_id).first()
         if victim:
             if nik:
                 victim.nik = nik
-            if picture_path:
-                victim.picture_path = picture_path
+            if picturePath:
+                victim.picturePath = picturePath
             if name:
                 victim.name = name
             if age:
                 victim.age = age
-            if forensic_result:
-                victim.forensic_result = forensic_result
+            if forensicResult:
+                victim.forensicResult = forensicResult
             self.db.commit()
             self.db.refresh(victim)
             return victim

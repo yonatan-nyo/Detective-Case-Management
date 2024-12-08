@@ -334,6 +334,10 @@ class CaseView:
         def assign_suspects(e):
             """Handles the assign suspects button click."""
             self.render_assign_suspects(case)
+
+        def assign_victims(e):
+            """Handles the assign victims button click."""
+            self.render_assign_victims(case)
             
         # Display case details
         self.page.controls.clear()
@@ -380,6 +384,20 @@ class CaseView:
                                 ),
                             ]
                         ),
+                        ft.Row(
+                            [
+                                ft.Text("Victims:", size=16, weight="bold"),
+                                ft.Column(
+                                    [
+                                        ft.Text("No victim assigned.", size=16)
+                                        if not case.victims
+                                        else ft.Column(
+                                            [ft.Text(victim.name, size=16) for victim in case.victims]
+                                        )
+                                    ]
+                                ),
+                            ]
+                        ),
                         ft.Container(
                             content=ft.Text(
                                 f"Description:\n{case.description}",
@@ -405,6 +423,11 @@ class CaseView:
                                     text="Assign Suspects",
                                     icon=ft.Icons.PERSON_ADD,
                                     on_click=assign_suspects,
+                                ),
+                                ft.ElevatedButton(
+                                    text="Assign Victims",
+                                    icon=ft.Icons.PERSON_ADD,
+                                    on_click=assign_victims,
                                 ),
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
@@ -612,4 +635,70 @@ class CaseView:
         self.render_assign_suspects(case)
         
     
-    
+    def render_assign_victims(self, case):
+        """Renders a dialog to assign victims to the case."""
+        # Fetch unassigned victims
+        case_id = case.id
+        unassigned_victims = self.controller.get_unassigned_victims(case_id)
+        
+        # Create a dropdown for unassigned victims
+        victim_dropdown = ft.Dropdown(
+            label="Select Victim",
+            options=[
+                ft.dropdown.Option(key=victim.id, text=victim.name) 
+                for victim in unassigned_victims
+            ]
+        )
+        
+        def assign_victim(e):
+            if victim_dropdown.value:
+                self.controller.assign_victim_to_case(case.id, int(victim_dropdown.value))
+                # Re-render the case detail view
+                self.render_detail(case.id)
+        
+        assign_button = ft.ElevatedButton(
+            text="Assign Victim", 
+            on_click=assign_victim
+        )
+        
+        # Show list of currently assigned victims
+        assigned_victims_list = ft.Column(
+            [
+                ft.Row([
+                    ft.Text(victim.name, size=16),
+                    ft.IconButton(
+                        icon=ft.icons.DELETE,
+                        on_click=lambda e, s=victim: self.remove_victim_from_case(case, s)
+                    )
+                ])
+                for victim in case.victims
+            ]
+        )
+        
+        # Add the dialog to the page
+        self.page.controls.clear()
+        self.page.add(
+            ft.Container(
+                content=ft.Column([
+                    ft.Text("Assign Victims to Case", size=24),
+                    ft.Text(f"Case ID: {case.id}", size=16),
+                    ft.Row([victim_dropdown, assign_button]),
+                    ft.Text("Currently Assigned Victims:", size=18, weight="bold"),
+                    assigned_victims_list,
+                    ft.ElevatedButton(
+                        text="Back", 
+                        icon=ft.Icons.ARROW_BACK, 
+                        on_click=lambda e: self.render_detail(case.id)
+                    )
+                ]),
+                padding=20,
+                alignment=ft.alignment.center
+            )
+        )
+        self.page.update()
+
+    def remove_victim_from_case(self, case, victim):
+        """Remove a victim from the case."""
+        self.controller.remove_victim_from_case(case.id, victim.id)
+        # Re-render the assign victims view
+        self.render_assign_victims(case)

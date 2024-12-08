@@ -85,7 +85,7 @@ class VictimView:
                             ft.Text(f"Name: {victim.name}", size=14),
                             ft.Text(f"Age: {victim.age}", size=12),
                             ft.Text(
-                                f"Forensic Result: {victim.forensic_result}", size=12),
+                                f"Forensic Result: {victim.forensicResult}", size=12),
                         ],
                         alignment=ft.MainAxisAlignment.START,
                     ),
@@ -212,11 +212,11 @@ class VictimView:
                 shutil.copy(file.path, destination_path)
 
                 # Update the picture path field
-                picture_path_field.value = destination_path
-                picture_path_field.update()
+                picturePath_field.value = destination_path
+                picturePath_field.update()
             else:
-                picture_path_field.value = "No file selected"
-                picture_path_field.update()
+                picturePath_field.value = "No file selected"
+                picturePath_field.update()
 
         pick_file_dialog = ft.FilePicker(on_result=pick_file_result)
 
@@ -230,9 +230,9 @@ class VictimView:
                 self.page.update()
                 return
 
-            picture_path = picture_path_field.value.strip()
-            if not os.path.exists(picture_path):
-                picture_path_field.error_text = "Invalid picture path."
+            picturePath = picturePath_field.value.strip()
+            if not os.path.exists(picturePath):
+                picturePath_field.error_text = "Invalid picture path."
                 self.page.update()
                 return
 
@@ -251,29 +251,29 @@ class VictimView:
                 self.page.update()
                 return
 
-            forensic_result = forensic_result_field.value.strip()
-            if not forensic_result:
-                forensic_result_field.error_text = "Forensic result is required."
+            forensicResult = forensicResult_field.value.strip()
+            if not forensicResult:
+                forensicResult_field.error_text = "Forensic result is required."
                 self.page.update()
                 return
 
             # Add the victim via the controller
             self.controller.add_victim(
-                nik, picture_path, name, age, forensic_result)
+                nik, picturePath, name, age, forensicResult)
 
             # After submission, go back to victim management view
             self.render(self.page)
 
         # Form fields
         nik_field = ft.TextField(label="NIK")
-        picture_path_field = ft.TextField(
+        picturePath_field = ft.TextField(
             label="Picture Path", read_only=True, hint_text="Select a picture"
         )
         name_field = ft.TextField(label="Name")
         age_field = ft.TextField(
             label="Age", keyboard_type=ft.KeyboardType.NUMBER
         )
-        forensic_result_field = ft.TextField(label="Forensic Result")
+        forensicResult_field = ft.TextField(label="Forensic Result")
 
         # File picker button
         file_picker_button = ft.ElevatedButton(
@@ -304,12 +304,12 @@ class VictimView:
                     [
                         nik_field,
                         ft.Row(
-                            [picture_path_field, file_picker_button],
+                            [picturePath_field, file_picker_button],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         ),
                         name_field,
                         age_field,
-                        forensic_result_field,
+                        forensicResult_field,
                         submit_button,
                         ft.ElevatedButton(
                             text="Back",
@@ -354,13 +354,14 @@ class VictimView:
                 ft.Text(f"NIK: {victim.nik}", size=18),
                 ft.Text(f"Name: {victim.name}", size=18),
                 ft.Text(f"Age: {victim.age}", size=18),
-                ft.Text(f"Forensic Result: {victim.forensic_result}", size=18),
+                ft.Text(f"Forensic Result: {victim.forensicResult}", size=18),
+                ft.Text(f"Cases: {', '.join([str(case.id) for case in victim.cases])}" if victim.cases else "Cases: None", size=18),
                 ft.Image(
-                    src=victim.picture_path,
+                    src=victim.picturePath,
                     width=300,
                     height=300,
                     fit=ft.ImageFit.CONTAIN,
-                ) if victim.picture_path and os.path.exists(victim.picture_path)
+                ) if victim.picturePath and os.path.exists(victim.picturePath)
                 else ft.Text("No Picture Available", size=16),
                 ft.Row(
                     [
@@ -422,15 +423,15 @@ class VictimView:
 
         # Prepopulate fields with victim data
         nik_field = ft.TextField(label="NIK", value=victim.nik)
-        picture_path_field = ft.TextField(
-            label="Picture Path", value=victim.picture_path, read_only=True
+        picturePath_field = ft.TextField(
+            label="Picture Path", value=victim.picturePath, read_only=True
         )
         name_field = ft.TextField(label="Name", value=victim.name)
         age_field = ft.TextField(
             label="Age", value=str(victim.age), keyboard_type=ft.KeyboardType.NUMBER
         )
-        forensic_result_field = ft.TextField(
-            label="Forensic Result", value=victim.forensic_result)
+        forensicResult_field = ft.TextField(
+            label="Forensic Result", value=victim.forensicResult)
 
         def pick_file_result(e: ft.FilePickerResultEvent):
             """Handle file picker result."""
@@ -440,8 +441,8 @@ class VictimView:
                 unique_filename = f"{timestamp}_{uuid.uuid4().hex}_{file.name}"
                 destination_path = os.path.join("img/", unique_filename)
                 shutil.copy(file.path, destination_path)
-                picture_path_field.value = destination_path
-                picture_path_field.update()
+                picturePath_field.value = destination_path
+                picturePath_field.update()
 
         pick_file_dialog = ft.FilePicker(on_result=pick_file_result)
 
@@ -450,10 +451,10 @@ class VictimView:
             nik = nik_field.value.strip()
             name = name_field.value.strip()
             age = age_field.value
-            forensic_result = forensic_result_field.value.strip()
-            picture_path = picture_path_field.value.strip()
+            forensicResult = forensicResult_field.value.strip()
+            picturePath = picturePath_field.value.strip()
 
-            if not nik or not name or not age or not forensic_result:
+            if not nik or not name or not age or not forensicResult:
                 # Validate inputs and display errors
                 if not nik:
                     nik_field.error_text = "NIK is required."
@@ -461,8 +462,8 @@ class VictimView:
                     name_field.error_text = "Name is required."
                 if not age:
                     age_field.error_text = "Age is required."
-                if not forensic_result:
-                    forensic_result_field.error_text = "Forensic result is required."
+                if not forensicResult:
+                    forensicResult_field.error_text = "Forensic result is required."
                 self.page.update()
                 return
 
@@ -477,7 +478,7 @@ class VictimView:
 
             # Update the victim details
             self.controller.update_victim(
-                victim_id, nik=nik, picture_path=picture_path, name=name, age=age, forensic_result=forensic_result
+                victim_id, nik=nik, picturePath=picturePath, name=name, age=age, forensicResult=forensicResult
             )
             self.render(self.page)
 
@@ -496,13 +497,13 @@ class VictimView:
                     [
                         nik_field,
                         ft.Row(
-                            [picture_path_field, ft.ElevatedButton(
+                            [picturePath_field, ft.ElevatedButton(
                                 "Pick Picture", on_click=lambda _: pick_file_dialog.pick_files(allow_multiple=False))],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
                         ),
                         name_field,
                         age_field,
-                        forensic_result_field,
+                        forensicResult_field,
                         ft.ElevatedButton("Update Victim",
                                           on_click=handle_update),
                         ft.ElevatedButton(
