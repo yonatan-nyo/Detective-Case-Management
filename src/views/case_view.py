@@ -86,7 +86,8 @@ class CaseView:
                         [
                             ft.Text(f"ID: {case.id}", size=12),
                             ft.Text(f"Progress: {case.progress}", size=14),
-                            ft.Text(f"Start Date: {case.startDate}", size=12),
+                            ft.Text(
+                                f"Start Date: {str(case.startDate).split(' ')[0]}", size=12),
                             ft.Text(f"Detective: {case.detective}", size=12),
                         ],
                         alignment=ft.MainAxisAlignment.START,
@@ -403,7 +404,8 @@ class CaseView:
                         ft.Row(
                             [
                                 ft.Text("Start Date:", size=16, weight="bold"),
-                                ft.Text(case.startDate, size=16),
+                                ft.Text(str(case.startDate).split(
+                                    ' ')[0], size=16),
                             ]
                         ),
                         ft.Row(
