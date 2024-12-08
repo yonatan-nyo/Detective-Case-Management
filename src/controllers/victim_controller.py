@@ -84,12 +84,15 @@ class VictimController:
             self.db.refresh(case)
             return case
         return None
+
     def search_victims(self, name=None, nik=None):
         if name and nik:
-            by_name = set(self.db.query(Victim).filter(Victim.name.ilike(f"%{name}%")).all())
-            by_nik = set(self.db.query(Victim).filter(Victim.nik.ilike(f"%{nik}%")).all())
+            by_name = set(self.db.query(Victim).filter(
+                Victim.name.ilike(f"%{name}%")).all())
+            by_nik = set(self.db.query(Victim).filter(
+                Victim.nik.ilike(f"{nik}%")).all())
             return list(by_name & by_nik)
         if name:
             return self.db.query(Victim).filter(Victim.name.ilike(f"%{name}%")).all()
         if nik:
-            return self.db.query(Victim).filter(Victim.nik.ilike(f"%{nik}%")).all()
+            return self.db.query(Victim).filter(Victim.nik.ilike(f"{nik}%")).all()
