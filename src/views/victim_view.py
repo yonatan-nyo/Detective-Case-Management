@@ -153,6 +153,40 @@ class VictimView:
             on_change=lambda e: on_navigation_change(
                 page, e.control.selected_index),
         )
+        
+        search_results = ft.Column([self.build_victims_component(victims)], expand=True)
+
+        def perform_search(e):
+            name = name_field.value.strip()
+            nik = nik_field.value.strip()
+
+            if not name and not nik:
+                page.snack_bar = ft.SnackBar(content=ft.Text("Please enter Name or NIK to search."))
+                page.snack_bar.open = True
+                page.update()
+                return
+
+            search_results.controls.clear()
+
+            # Perform search via the controller
+            results = self.controller.search_victims(name, nik)
+
+            if results:
+                search_results.controls.append(self.build_victims_component(results))
+            else:
+                search_results.controls.append(ft.Text("No victims found matching your criteria."))
+            # Update page with search results
+            page.update()
+
+        def clear_search(e):
+            name_field.value = ""
+            nik_field.value = ""
+            self.render(page)
+
+        name_field = ft.TextField(label="Search by Name", width=300)
+        nik_field = ft.TextField(label="Search by NIK", width=300)
+        search_button = ft.ElevatedButton("Search", on_click=perform_search)
+        clear_button = ft.ElevatedButton("Clear", on_click=clear_search)
 
         self.page.controls.clear()
         self.page.add(
@@ -167,10 +201,8 @@ class VictimView:
                                 padding=10,
                                 alignment=ft.alignment.center,
                             ),
-                            ft.Column(
-                                [self.build_victims_component(victims)],
-                                expand=True,
-                            ),
+                            ft.Row([name_field, nik_field, search_button, clear_button], alignment=ft.MainAxisAlignment.START),
+                            search_results, 
                             self.build_pagination_controls(),
                         ],
                         expand=True,
