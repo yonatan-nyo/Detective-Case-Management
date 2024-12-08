@@ -374,8 +374,8 @@ class SuspectView:
                     f"Gender: {'Male' if suspect.gender else 'Female'}", size=18
                 ),
                 ft.Text(
-                    f"Cases: {', '.join(
-                        [str(case.id) for case in suspect.cases])}" if suspect.cases else "Cases: None",
+                    f"Cases: {', '.join([str(case.id) for case in suspect.cases])}"
+                    if suspect.cases else "Cases: None",
                     size=18
                 ),
                 ft.Text(f"Note: {suspect.note or 'N/A'}", size=18),

@@ -355,8 +355,8 @@ class VictimView:
                 ft.Text(f"Name: {victim.name}", size=18),
                 ft.Text(f"Age: {victim.age}", size=18),
                 ft.Text(f"Forensic Result: {victim.forensic_result}", size=18),
-                ft.Text(f"Cases: {', '.join(
-                    [str(case.id) for case in victim.cases])}" if victim.cases else "Cases: None", size=18),
+                ft.Text(f"Cases: {', '.join([str(case.id) for case in victim.cases])}"
+                        if victim.cases else "Cases: None", size=18),
                 ft.Image(
                     src=victim.picture_path,
                     width=300,
