@@ -84,3 +84,11 @@ class VictimController:
             self.db.refresh(case)
             return case
         return None
+
+    def search_victims_by_name(self, name):
+        """Search victims by name (partial match)."""
+        return self.db.query(Victim).filter(Victim.name.ilike(f"%{name}%")).all()
+
+    def search_victims_by_nik(self, nik):
+        """Search victims by NIK."""
+        return self.db.query(Victim).filter(Victim.nik == nik).all()
