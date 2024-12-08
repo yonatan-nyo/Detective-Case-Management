@@ -1,4 +1,3 @@
-# controllers/suspect_controller.py
 from models.suspect import Suspect
 from models.database import SessionLocal
 from models.case import Case
@@ -12,6 +11,10 @@ class SuspectController:
         """Get all suspects."""
         return self.db.query(Suspect).all()
 
+    def get_suspect_by_id(self, suspect_id):
+        """Retrieve a suspect by their ID."""
+        return self.db.query(Suspect).filter(Suspect.id == suspect_id).first()
+
     def get_suspects_by_case(self, case_id):
         """Get all suspects associated with a specific case."""
         case = self.db.query(Case).filter(Case.id == case_id).first()
@@ -19,14 +22,14 @@ class SuspectController:
             return case.suspects  # Assuming suspects is a relationship in the Case model
         return []
 
-    def add_suspect(self, nik, picturePath, name, age, gender, note):
+    def add_suspect(self, nik, picture_path, name, age, gender, note):
         """Add a new suspect."""
         new_suspect = Suspect(
             nik=nik,
-            picturePath=picturePath,
+            picture_path=picture_path,
             name=name,
             age=age,
-            gender=gender,
+            gender=(gender == "True"),
             note=note
         )
         self.db.add(new_suspect)
@@ -34,21 +37,21 @@ class SuspectController:
         self.db.refresh(new_suspect)
         return new_suspect
 
-    def update_suspect(self, suspect_id, nik=None, picturePath=None, name=None, age=None, gender=None, note=None):
+    def update_suspect(self, suspect_id, nik=None, picture_path=None, name=None, age=None, gender=None, note=None):
         """Update details of an existing suspect."""
         suspect = self.db.query(Suspect).filter(
             Suspect.id == suspect_id).first()
         if suspect:
             if nik:
                 suspect.nik = nik
-            if picturePath:
-                suspect.picturePath = picturePath
+            if picture_path:
+                suspect.picture_path = picture_path
             if name:
                 suspect.name = name
             if age:
                 suspect.age = age
             if gender is not None:
-                suspect.gender = gender
+                suspect.gender = (gender == "True")
             if note:
                 suspect.note = note
             self.db.commit()
