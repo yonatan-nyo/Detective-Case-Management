@@ -89,6 +89,7 @@ class CaseView:
                             ft.Text(
                                 f"Start Date: {str(case.startDate).split(' ')[0]}", size=12),
                             ft.Text(f"Detective: {case.detective}", size=12),
+                            ft.Text(f"Priority: {case.priority}", size=12),
                         ],
                         alignment=ft.MainAxisAlignment.START,
                     ),
@@ -264,10 +265,11 @@ class CaseView:
                 selected_date.error_text = "Invalid date format (expected YYYY-MM-DD)."
                 self.page.update()
                 return
-
+            
             # Get other fields
             description = description_field.value
             detective = detective_field.value
+            priority = priority_field.value
 
             # Validate description
             if not description.strip():
@@ -277,7 +279,7 @@ class CaseView:
 
             # Add the new case using the controller
             self.controller.add_case(
-                progress, start_date, description, detective)
+                progress, start_date, description, detective, priority)
 
             # After submitting, render the case management view again
             self.render(self.page)
@@ -304,6 +306,14 @@ class CaseView:
         )
         description_field = ft.TextField(label="Description", multiline=True)
         detective_field = ft.TextField(label="Detective")
+        priority_field = ft.Dropdown(
+        label="Priority",
+        options=[
+            ft.dropdown.Option(key="Low", text="Low"),
+            ft.dropdown.Option(key="Medium", text="Medium"),
+            ft.dropdown.Option(key="High", text="High"),
+        ],
+    )
 
         # Submit button
         submit_button = ft.ElevatedButton(
@@ -326,6 +336,7 @@ class CaseView:
                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                         description_field,
                         detective_field,
+                        priority_field,
                         submit_button,
                         ft.ElevatedButton(
                             text="Back",
@@ -411,7 +422,17 @@ class CaseView:
                         ft.Row(
                             [
                                 ft.Text("Detective:", size=16, weight="bold"),
-                                ft.Text(case.detective, size=16),
+                                ft.Text("-", size=16)
+                                    if case.detective is None
+                                    else ft.Text(case.detective, size=16)
+                            ]
+                        ),
+                        ft.Row(
+                            [
+                                ft.Text("Priority:", size=16, weight="bold"),
+                                ft.Text("-", size=16)
+                                    if case.priority is None
+                                    else ft.Text(case.priority, size=16)
                             ]
                         ),
                         ft.Row(
@@ -533,6 +554,7 @@ class CaseView:
             # Get other fields
             description = description_field.value
             detective = detective_field.value
+            priority = priority_field.value
 
             # Validate description
             if not description.strip():
@@ -542,7 +564,7 @@ class CaseView:
 
             # Update the case using the controller
             self.controller.update_case(
-                case.id, progress, start_date, description, detective
+                case.id, progress, start_date, description, detective, priority
             )
 
             # After submitting, render the case management view again
@@ -569,9 +591,17 @@ class CaseView:
                 )
             ),
         )
-        description_field = ft.TextField(
-            label="Description", multiline=True, value=case.description)
+        description_field = ft.TextField(label="Description", multiline=True, value=case.description)
         detective_field = ft.TextField(label="Detective", value=case.detective)
+        priority_field = ft.Dropdown(
+            label="Priority",
+            options=[
+                ft.dropdown.Option(key="Low", text="Low"),
+                ft.dropdown.Option(key="Medium", text="Medium"),
+                ft.dropdown.Option(key="High", text="High"),
+            ],
+            value=case.priority,
+        )
 
         # Submit button
         submit_button = ft.ElevatedButton(
@@ -594,6 +624,7 @@ class CaseView:
                                alignment=ft.MainAxisAlignment.SPACE_BETWEEN),
                         description_field,
                         detective_field,
+                        priority_field,
                         submit_button,
                         ft.ElevatedButton(
                             text="Back",

@@ -13,6 +13,7 @@ class Case(Base):
     startDate = Column(Date, nullable=False)
     description = Column(Text, nullable=False)
     detective = Column(String, nullable=True)
+    priority = Column(String, nullable=True)
 
     victims = relationship(
         'Victim', secondary=CaseVictim, back_populates="cases")

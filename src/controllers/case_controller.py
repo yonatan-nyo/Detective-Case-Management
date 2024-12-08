@@ -40,9 +40,9 @@ class CaseController:
             "total_pages": (total_cases + per_page - 1) // per_page,
         }
 
-    def add_case(self, progress, startDate, description, detective):
+    def add_case(self, progress, startDate, description, detective, priority):
         new_case = Case(progress=progress, startDate=startDate,
-                        description=description, detective=detective)
+                        description=description, detective=detective, priority=priority)
         self.db.add(new_case)
         self.db.commit()
         self.db.refresh(new_case)
@@ -53,13 +53,14 @@ class CaseController:
             self.db.delete(case)
             self.db.commit()
 
-    def update_case(self, case_id, progress, startDate, description, detective):
+    def update_case(self, case_id, progress, startDate, description, detective, priority):
         case = self.db.query(Case).filter(Case.id == case_id).first()
         if case:
             case.progress = progress
             case.startDate = startDate
             case.description = description
             case.detective = detective
+            case.priority = priority
             self.db.commit()
             self.db.refresh(case)
 
