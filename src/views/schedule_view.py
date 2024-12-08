@@ -69,16 +69,16 @@ class Schedule:
         self.cases = self.calendar_controller.get_all_cases(
             self.current_month, self.current_year)
         self.filtered_cases = self.cases  # Initially no filtering
-        
+
     def get_priority_color(self, priority):
         """Returns color based on priority."""
         priority_colors = {
-            "Low": ft.Colors.GREEN_200,
-            "Medium": ft.Colors.YELLOW_200,
-            "High": ft.Colors.RED_200
+            "Rendah": ft.Colors.GREEN_200,
+            "Sedang": ft.Colors.YELLOW_200,
+            "Tinggi": ft.Colors.RED_200
         }
         return priority_colors.get(priority, ft.colors.GREY_300)
-    
+
     def render(self, page):
         """Renders the schedule page."""
         self.page = page
@@ -123,49 +123,49 @@ class Schedule:
 
         header = ft.Row(
             [
-            ft.Dropdown(
-                label="Bulan",
-                options=[ft.dropdown.Option(month)
-                    for month in calendar.month_name[1:]],
-                value=calendar.month_name[self.current_month],
-                width=120,
-                on_change=lambda e: self.update_date(
-                e.control.value, self.current_year),
-            ),
-            ft.Dropdown(
-                label="Tahun",
-                options=[ft.dropdown.Option(str(year)) for year in range(
-                2000, datetime.now().year + 1)],
-                value=str(self.current_year),
-                width=100,
-                on_change=lambda e: self.update_date(
-                self.current_month, e.control.value),
-            ),
-            ft.Dropdown(
-                label="Prioritas",
-                options=[ft.dropdown.Option("Semua"), ft.dropdown.Option(
-                "High"), ft.dropdown.Option("Medium"), ft.dropdown.Option("Low")],
-                value=self.current_priority,
-                width=120,
-                on_change=lambda e: self.update_filter(
-                e.control.value, self.selected_victim, self.selected_suspect),
-            ),
-            ft.Dropdown(
-                label="Victim",
-                options=victim_options,
-                value=self.selected_victim,
-                width=100,
-                on_change=lambda e: self.update_filter(
-                self.current_priority, e.control.value, self.selected_suspect),
-            ),
-            ft.Dropdown(
-                label="Suspect",
-                options=suspect_options,
-                value=self.selected_suspect,
-                width=100,
-                on_change=lambda e: self.update_filter(
-                self.current_priority, self.selected_victim, e.control.value),
-            ),
+                ft.Dropdown(
+                    label="Bulan",
+                    options=[ft.dropdown.Option(month)
+                             for month in calendar.month_name[1:]],
+                    value=calendar.month_name[self.current_month],
+                    width=120,
+                    on_change=lambda e: self.update_date(
+                        e.control.value, self.current_year),
+                ),
+                ft.Dropdown(
+                    label="Tahun",
+                    options=[ft.dropdown.Option(str(year)) for year in range(
+                        2000, datetime.now().year + 1)],
+                    value=str(self.current_year),
+                    width=100,
+                    on_change=lambda e: self.update_date(
+                        self.current_month, e.control.value),
+                ),
+                ft.Dropdown(
+                    label="Prioritas",
+                    options=[ft.dropdown.Option("Semua"), ft.dropdown.Option(
+                        "Tinggi"), ft.dropdown.Option("Sedang"), ft.dropdown.Option("Rendah")],
+                    value=self.current_priority,
+                    width=120,
+                    on_change=lambda e: self.update_filter(
+                        e.control.value, self.selected_victim, self.selected_suspect),
+                ),
+                ft.Dropdown(
+                    label="Victim",
+                    options=victim_options,
+                    value=self.selected_victim,
+                    width=100,
+                    on_change=lambda e: self.update_filter(
+                        self.current_priority, e.control.value, self.selected_suspect),
+                ),
+                ft.Dropdown(
+                    label="Suspect",
+                    options=suspect_options,
+                    value=self.selected_suspect,
+                    width=100,
+                    on_change=lambda e: self.update_filter(
+                        self.current_priority, self.selected_victim, e.control.value),
+                ),
             ],
             alignment=ft.MainAxisAlignment.START,
             spacing=15,
@@ -174,7 +174,8 @@ class Schedule:
         # Generate the calendar days
         calendar_days = []
         first_day_of_month = datetime(self.current_year, self.current_month, 1)
-        start_day = first_day_of_month - timedelta(days=first_day_of_month.weekday() + 1)
+        start_day = first_day_of_month - \
+            timedelta(days=first_day_of_month.weekday() + 1)
 
         # Create a dictionary to map the date to the case IDs
         case_map = {}
@@ -187,11 +188,11 @@ class Schedule:
                 case_map[case_day].append({
                     'id': f"ID: {case.id}",
                     'priority': case.priority
-        })
+                })
 
         for i in range(42):
             day = start_day + timedelta(days=i)
-            
+
             case_texts = []
             if day.month == self.current_month and day.year == self.current_year:
                 day_cases = case_map.get(day.day, [])
@@ -199,7 +200,7 @@ class Schedule:
                     color = self.get_priority_color(case_info['priority'])
                     case_texts.append(
                         ft.Text(
-                            case_info['id'], 
+                            case_info['id'],
                             color=color,
                             size=13,
                             weight="bold",
@@ -215,7 +216,7 @@ class Schedule:
                                 color=ft.Colors.WHITE if day.month == self.current_month else ft.Colors.GREY,
                                 size=14,
                             ),
-                            *case_texts 
+                            *case_texts
                         ],
                         alignment=ft.MainAxisAlignment.START,
                         spacing=5,
@@ -227,7 +228,7 @@ class Schedule:
                     padding=10,
                 )
             )
-            
+
         calendar_grid = ft.GridView(
             expand=True,
             runs_count=7,
@@ -240,7 +241,7 @@ class Schedule:
         content = ft.Column(
             [
                 ft.Text("SCHEDULE", size=25, weight="bold",
-                        color=ft.Colors.BLACK),
+                        color=ft.Colors.WHITE),
                 header,
                 ft.Divider(color=ft.Colors.GREY),
                 calendar_grid,
@@ -312,8 +313,8 @@ class Schedule:
     def get_priority_color(self, priority):
         """Returns color based on priority."""
         priority_colors = {
-            "Low": ft.Colors.GREEN_900,
-            "Medium": ft.Colors.YELLOW_900,
-            "High": ft.Colors.RED_900
+            "Rendah": ft.Colors.GREEN_900,
+            "Sedang": ft.Colors.YELLOW_900,
+            "Tinggi": ft.Colors.RED_900
         }
         return priority_colors.get(priority, ft.Colors.GREY_300)
