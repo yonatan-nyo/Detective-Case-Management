@@ -28,6 +28,9 @@ def on_navigation_change(page: ft.Page, selected_index: int):
         SuspectView().render(page)
     elif selected_index == 2:
         VictimView().render(page)
+    elif selected_index == 3:
+        from views.schedule_view import Schedule
+        Schedule().render(page)
     else:
         page.controls.clear()
         page.add(
@@ -352,6 +355,8 @@ class VictimView:
                 ft.Text(f"Name: {victim.name}", size=18),
                 ft.Text(f"Age: {victim.age}", size=18),
                 ft.Text(f"Forensic Result: {victim.forensic_result}", size=18),
+                ft.Text(f"Cases: {', '.join([str(case.id) for case in victim.cases])}"
+                        if victim.cases else "Cases: None", size=18),
                 ft.Image(
                     src=victim.picture_path,
                     width=300,

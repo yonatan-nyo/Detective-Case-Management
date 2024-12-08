@@ -30,6 +30,9 @@ def on_navigation_change(page: ft.Page, selected_index: int):
     elif selected_index == 2:
         from views.victim_view import VictimView
         VictimView().render(page)
+    elif selected_index == 3:
+        from views.schedule_view import Schedule
+        Schedule().render(page)
     else:
         page.controls.clear()
         page.add(
@@ -369,6 +372,11 @@ class SuspectView:
                 ft.Text(f"Age: {suspect.age}", size=18),
                 ft.Text(
                     f"Gender: {'Male' if suspect.gender else 'Female'}", size=18
+                ),
+                ft.Text(
+                    f"Cases: {', '.join([str(case.id) for case in suspect.cases])}"
+                    if suspect.cases else "Cases: None",
+                    size=18
                 ),
                 ft.Text(f"Note: {suspect.note or 'N/A'}", size=18),
                 ft.Image(
