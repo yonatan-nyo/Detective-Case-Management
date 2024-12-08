@@ -280,7 +280,7 @@ class Schedule:
             case for case in self.cases
             if (
                 # Filter by priority
-                (self.current_priority == "Semua" or case.progress == self.current_priority) and
+                (self.current_priority == "Semua" or case.priority == self.current_priority) and
                 # Filter by victim
                 (self.selected_victim == "No Victims" or any(victim.name == self.selected_victim for victim in case.victims)) and
                 (self.selected_suspect == "No Suspects" or any(suspect.name ==
