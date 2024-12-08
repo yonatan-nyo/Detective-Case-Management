@@ -77,24 +77,75 @@ class VictimView:
             def on_tap_down(_e: ft.ContainerTapEvent, idx=_idx):
                 self.render_victim_detail(victims[idx].id)
 
-            victim_card = (
-                ft.Container(
-                    content=ft.Column(
-                        [
-                            ft.Text(f"NIK: {victim.nik}", size=12),
-                            ft.Text(f"Name: {victim.name}", size=14),
-                            ft.Text(f"Age: {victim.age}", size=12),
-                            ft.Text(
-                                f"Forensic Result: {victim.forensic_result}", size=12),
-                        ],
-                        alignment=ft.MainAxisAlignment.START,
-                    ),
-                    bgcolor=ft.Colors.BLACK54,
-                    on_hover=on_hover,
-                    on_tap_down=lambda e, idx=_idx: on_tap_down(e, idx),
-                    padding=10,
-                    expand=False,
-                )
+            victim_card = ft.Container(
+                content=ft.Column(
+                    [
+                        ft.Row(
+                            [
+                                # Picture of the victim
+                                ft.Container(
+                                    content=ft.Image(
+                                        src=victim.picture_path,  # Assuming the path is valid
+                                        width=80,
+                                        height=80,
+                                        fit=ft.ImageFit.COVER,
+                                    ),
+                                    border_radius=5,
+                                    bgcolor=ft.Colors.GREY_800,
+                                    margin=2,
+                                ),
+                                # Victim details
+                                ft.Column(
+                                    [
+                                        ft.Row(
+                                            [
+                                                ft.Text(
+                                                    "NIK: ", weight=ft.FontWeight.BOLD),
+                                                ft.Text(victim.nik),
+                                            ],
+                                            alignment=ft.MainAxisAlignment.START,
+                                        ),
+                                        ft.Row(
+                                            [
+                                                ft.Text(
+                                                    "Name: ", weight=ft.FontWeight.BOLD),
+                                                ft.Text(victim.name),
+                                            ],
+                                            alignment=ft.MainAxisAlignment.START,
+                                        ),
+                                        ft.Row(
+                                            [
+                                                ft.Text(
+                                                    "Age: ", weight=ft.FontWeight.BOLD),
+                                                ft.Text(str(victim.age)),
+                                            ],
+                                            alignment=ft.MainAxisAlignment.START,
+                                        ),
+
+                                    ],
+                                    spacing=2,
+                                    alignment=ft.MainAxisAlignment.START,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.START,
+                            spacing=6,
+                        ),
+                        ft.Container(
+                            content=ft.Text(
+                                f"Forensic: {victim.forensic_result}" if victim.forensic_result else "No forensic result",
+                                max_lines=3,
+                                overflow=ft.TextOverflow.ELLIPSIS,
+                                style=ft.TextStyle(
+                                    size=12, color=ft.Colors.GREY_400),
+                            ),
+                        ),
+                    ]
+                ),
+                border_radius=8,
+                bgcolor=ft.Colors.BLACK54,
+                padding=10,
+                on_hover=on_hover,
+                on_tap_down=lambda e, idx=_idx: on_tap_down(e, idx),
             )
 
             temp_row.append(
