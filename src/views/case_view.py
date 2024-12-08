@@ -643,7 +643,7 @@ class CaseView:
                 ft.Row([
                     ft.Text(suspect.name, size=16),
                     ft.IconButton(
-                        icon=ft.icons.DELETE,
+                        icon=ft.Icons.DELETE,
                         on_click=lambda e, s=suspect: self.remove_suspect_from_case(
                             case, s)
                     )
@@ -714,7 +714,7 @@ class CaseView:
                 ft.Row([
                     ft.Text(victim.name, size=16),
                     ft.IconButton(
-                        icon=ft.icons.DELETE,
+                        icon=ft.Icons.DELETE,
                         on_click=lambda e, s=victim: self.remove_victim_from_case(
                             case, s)
                     )
