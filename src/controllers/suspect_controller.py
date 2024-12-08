@@ -90,3 +90,15 @@ class SuspectController:
             self.db.refresh(case)
             return case
         return None
+    
+    def search_suspects(self, name=None, nik=None):
+        if name and nik:
+            by_name = set(self.db.query(Suspect).filter(
+                Suspect.name.ilike(f"%{name}%")).all())
+            by_nik = set(self.db.query(Suspect).filter(
+                Suspect.nik.ilike(f"{nik}%")).all())
+            return list(by_name & by_nik)
+        if name:
+            return self.db.query(Suspect).filter(Suspect.name.ilike(f"%{name}%")).all()
+        if nik:
+            return self.db.query(Suspect).filter(Suspect.nik.ilike(f"{nik}%")).all()
