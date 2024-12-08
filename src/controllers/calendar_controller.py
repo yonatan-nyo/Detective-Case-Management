@@ -10,7 +10,7 @@ class CalendarController:
         self.db = SessionLocal()
 
     def get_all_cases(self, month, year):
-        return self.db.query(Case).join(Case.victims).join(Case.suspects).filter(
+        return self.db.query(Case).outerjoin(Case.victims).outerjoin(Case.suspects).filter(
             extract('year', Case.startDate) == year,
             extract('month', Case.startDate) == month
         ).options(

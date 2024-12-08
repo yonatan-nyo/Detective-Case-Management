@@ -265,7 +265,7 @@ class CaseView:
                 selected_date.error_text = "Invalid date format (expected YYYY-MM-DD)."
                 self.page.update()
                 return
-            
+
             # Get other fields
             description = description_field.value
             detective = detective_field.value
@@ -307,13 +307,13 @@ class CaseView:
         description_field = ft.TextField(label="Description", multiline=True)
         detective_field = ft.TextField(label="Detective")
         priority_field = ft.Dropdown(
-        label="Priority",
-        options=[
-            ft.dropdown.Option(key="Low", text="Low"),
-            ft.dropdown.Option(key="Medium", text="Medium"),
-            ft.dropdown.Option(key="High", text="High"),
-        ],
-    )
+            label="Priority",
+            options=[
+                ft.dropdown.Option(key="Rendah", text="Rendah"),
+                ft.dropdown.Option(key="Sedang", text="Sedang"),
+                ft.dropdown.Option(key="Tinggi", text="Tinggi"),
+            ],
+        )
 
         # Submit button
         submit_button = ft.ElevatedButton(
@@ -423,16 +423,16 @@ class CaseView:
                             [
                                 ft.Text("Detective:", size=16, weight="bold"),
                                 ft.Text("-", size=16)
-                                    if case.detective is None
-                                    else ft.Text(case.detective, size=16)
+                                if case.detective is None
+                                else ft.Text(case.detective, size=16)
                             ]
                         ),
                         ft.Row(
                             [
                                 ft.Text("Priority:", size=16, weight="bold"),
                                 ft.Text("-", size=16)
-                                    if case.priority is None
-                                    else ft.Text(case.priority, size=16)
+                                if case.priority is None
+                                else ft.Text(case.priority, size=16)
                             ]
                         ),
                         ft.Row(
@@ -591,14 +591,15 @@ class CaseView:
                 )
             ),
         )
-        description_field = ft.TextField(label="Description", multiline=True, value=case.description)
+        description_field = ft.TextField(
+            label="Description", multiline=True, value=case.description)
         detective_field = ft.TextField(label="Detective", value=case.detective)
         priority_field = ft.Dropdown(
             label="Priority",
             options=[
-                ft.dropdown.Option(key="Low", text="Low"),
-                ft.dropdown.Option(key="Medium", text="Medium"),
-                ft.dropdown.Option(key="High", text="High"),
+                ft.dropdown.Option(key="Rendah", text="Rendah"),
+                ft.dropdown.Option(key="Sedang", text="Sedang"),
+                ft.dropdown.Option(key="Tinggi", text="Tinggi"),
             ],
             value=case.priority,
         )
