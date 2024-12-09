@@ -135,3 +135,14 @@ class CaseController:
         if case and victim:
             case.victims.remove(victim)
             self.db.commit()
+
+    def get_top_ten_suspects(self):
+        """Retrieve the top ten suspects by number of cases."""
+        return self.db.query(Suspect).order_by(Suspect.cases_count.desc()).limit(10).all()
+    
+
+    def get_top_ten_victims(self):
+        """Retrieve the top ten victims by number of cases."""
+        return self.db.query(Victim).order_by(Victim.cases_count.desc()).limit(10).all()
+    
+    

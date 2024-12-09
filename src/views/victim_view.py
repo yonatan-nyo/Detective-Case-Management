@@ -31,6 +31,9 @@ def on_navigation_change(page: ft.Page, selected_index: int):
     elif selected_index == 3:
         from views.schedule_view import Schedule
         Schedule().render(page)
+    elif selected_index == 4:
+        from views.statistic_view import Statistic
+        Statistic().render(page)
     else:
         page.controls.clear()
         page.add(
