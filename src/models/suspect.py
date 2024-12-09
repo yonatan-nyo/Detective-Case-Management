@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean, Text
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean, Text, select, func
+from sqlalchemy.orm import relationship, column_property
 from .case_suspect import CaseSuspect
 from .database import Base
 
@@ -19,3 +19,9 @@ class Suspect(Base):
 
     cases = relationship('Case', secondary=CaseSuspect,
                          back_populates='suspects')
+
+    cases_count = column_property(
+        select(func.count(CaseSuspect.c.case_id))
+        .where(CaseSuspect.c.suspect_id == id)
+        .scalar_subquery()
+    )
