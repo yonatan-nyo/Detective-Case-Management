@@ -218,14 +218,16 @@ class SuspectView:
                 page, e.control.selected_index),
         )
 
-        search_results = ft.Column([self.build_suspects_component(suspects)], expand=True)
+        search_results = ft.Column(
+            [self.build_suspects_component(suspects)], expand=True)
 
         def perform_search(e):
             name = name_field.value.strip()
             nik = nik_field.value.strip()
 
             if not name and not nik:
-                page.snack_bar = ft.SnackBar(content=ft.Text("Please enter Name or NIK to search."))
+                page.snack_bar = ft.SnackBar(content=ft.Text(
+                    "Please enter Name or NIK to search."))
                 page.snack_bar.open = True
                 page.update()
                 return
@@ -236,9 +238,11 @@ class SuspectView:
             results = self.controller.search_suspects(name, nik)
 
             if results:
-                search_results.controls.append(self.build_suspects_component(results))
+                search_results.controls.append(
+                    self.build_suspects_component(results))
             else:
-                search_results.controls.append(ft.Text("No suspects found matching your criteria."))
+                search_results.controls.append(
+                    ft.Text("No suspects found matching your criteria."))
             # Update page with search results
             page.update()
 
@@ -254,24 +258,30 @@ class SuspectView:
 
         self.page.controls.clear()
         self.page.add(
-            ft.Row(
-                [
-                    rail,
-                    ft.VerticalDivider(width=1),
-                    ft.Column(
-                        [
-                            ft.Container(
-                                content=ft.Text("Suspect Management", size=24),
-                                padding=10,
-                                alignment=ft.alignment.center,
-                            ),
-                            ft.Row([name_field, nik_field, search_button, clear_button], alignment=ft.MainAxisAlignment.START),
-                            search_results,
-                            self.build_pagination_controls(),
-                        ],
-                        expand=True,
-                    ),
-                ],
+            ft.Container(
+                content=ft.Row(
+                    [
+                        rail,
+                        ft.VerticalDivider(width=1),
+                        ft.Column(
+                            [
+                                ft.Container(
+                                    content=ft.Text(
+                                        "Suspect Management", size=24),
+                                    padding=10,
+                                    alignment=ft.alignment.center,
+                                ),
+                                ft.Row([name_field, nik_field, search_button,
+                                        clear_button], alignment=ft.MainAxisAlignment.START),
+                                search_results,
+                                self.build_pagination_controls(),
+                            ],
+                            expand=True,
+                        ),
+                    ],
+                    expand=True,
+                ),
+                bgcolor="#111518",
                 expand=True,
             )
         )
@@ -431,6 +441,7 @@ class SuspectView:
                 padding=10,
                 expand=True,
                 alignment=ft.alignment.center,
+                bgcolor="#111518",
             )
         )
         self.page.update()
@@ -514,6 +525,7 @@ class SuspectView:
                 padding=20,
                 expand=True,
                 alignment=ft.alignment.center,
+                bgcolor="#111518",
             )
         )
         self.page.update()
@@ -645,6 +657,7 @@ class SuspectView:
                 padding=10,
                 expand=True,
                 alignment=ft.alignment.center,
+                bgcolor="#111518",
             )
         )
         self.page.update()

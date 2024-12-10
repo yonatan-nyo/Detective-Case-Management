@@ -207,15 +207,17 @@ class VictimView:
             on_change=lambda e: on_navigation_change(
                 page, e.control.selected_index),
         )
-        
-        search_results = ft.Column([self.build_victims_component(victims)], expand=True)
+
+        search_results = ft.Column(
+            [self.build_victims_component(victims)], expand=True)
 
         def perform_search(e):
             name = name_field.value.strip()
             nik = nik_field.value.strip()
 
             if not name and not nik:
-                page.snack_bar = ft.SnackBar(content=ft.Text("Please enter Name or NIK to search."))
+                page.snack_bar = ft.SnackBar(content=ft.Text(
+                    "Please enter Name or NIK to search."))
                 page.snack_bar.open = True
                 page.update()
                 return
@@ -226,9 +228,11 @@ class VictimView:
             results = self.controller.search_victims(name, nik)
 
             if results:
-                search_results.controls.append(self.build_victims_component(results))
+                search_results.controls.append(
+                    self.build_victims_component(results))
             else:
-                search_results.controls.append(ft.Text("No victims found matching your criteria."))
+                search_results.controls.append(
+                    ft.Text("No victims found matching your criteria."))
             # Update page with search results
             page.update()
 
@@ -244,25 +248,31 @@ class VictimView:
 
         self.page.controls.clear()
         self.page.add(
-            ft.Row(
-                [
-                    rail,
-                    ft.VerticalDivider(width=1),
-                    ft.Column(
-                        [
-                            ft.Container(
-                                content=ft.Text("Victim Management", size=24),
-                                padding=10,
-                                alignment=ft.alignment.center,
-                            ),
-                            ft.Row([name_field, nik_field, search_button, clear_button], alignment=ft.MainAxisAlignment.START),
-                            search_results, 
-                            self.build_pagination_controls(),
-                        ],
-                        expand=True,
-                    ),
-                ],
+            ft.Container(
+                content=ft.Row(
+                    [
+                        rail,
+                        ft.VerticalDivider(width=1),
+                        ft.Column(
+                            [
+                                ft.Container(
+                                    content=ft.Text(
+                                        "Victim Management", size=24),
+                                    padding=10,
+                                    alignment=ft.alignment.center,
+                                ),
+                                ft.Row([name_field, nik_field, search_button,
+                                       clear_button], alignment=ft.MainAxisAlignment.START),
+                                search_results,
+                                self.build_pagination_controls(),
+                            ],
+                            expand=True,
+                        ),
+                    ],
+                    expand=True,
+                ),
                 expand=True,
+                bgcolor="#111518",
             )
         )
 
@@ -410,6 +420,7 @@ class VictimView:
                 padding=10,
                 expand=True,
                 alignment=ft.alignment.center,
+                bgcolor="#111518",
             )
         )
         self.page.update()
@@ -485,6 +496,7 @@ class VictimView:
                 padding=20,
                 expand=True,
                 alignment=ft.alignment.center,
+                bgcolor="#111518",
             )
         )
         self.page.update()
@@ -606,6 +618,7 @@ class VictimView:
                 padding=10,
                 expand=True,
                 alignment=ft.alignment.center,
+                bgcolor="#111518",
             )
         )
         self.page.update()

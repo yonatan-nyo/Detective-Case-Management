@@ -99,15 +99,19 @@ class Schedule:
 
         self.page.controls.clear()
         self.page.add(
-            ft.Row(
-                [
-                    rail,
-                    ft.VerticalDivider(width=1),
-                    ft.Container(
-                        content=self.create_page(),
-                        expand=True,
-                    ),
-                ],
+            ft.Container(
+                content=ft.Row(
+                    [
+                        rail,
+                        ft.VerticalDivider(width=1),
+                        ft.Container(
+                            content=self.create_page(),
+                            expand=True,
+                        ),
+                    ],
+                    expand=True,
+                ),
+                bgcolor="#111518",
                 expand=True,
             )
         )
