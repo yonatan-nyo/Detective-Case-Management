@@ -20,8 +20,4 @@ class Suspect(Base):
     cases = relationship('Case', secondary=CaseSuspect,
                          back_populates='suspects')
 
-    cases_count = column_property(
-        select(func.count(CaseSuspect.c.case_id))
-        .where(CaseSuspect.c.suspect_id == id)
-        .scalar_subquery()
-    )
+    
