@@ -5,6 +5,7 @@ from views.case_view import CaseView
 
 
 def main(page: ft.Page):
+    page.theme_mode = ft.ThemeMode.DARK
     page.title = "Kasus Kriminal"
     CaseView().render(page)
 
