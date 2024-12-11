@@ -2,10 +2,40 @@
 
 A desktop application built with **Flet** for managing tasks using an MVC architecture and a PostgreSQL database.
 
+---
+
 ## Features
 
-- **Case Management**: Add ....
-- **Modern UI**: Built using Flet for a clean and user-friendly interface.
+-   **Case Management**
+
+    -   Allows users to manage and view cases.
+
+-   **Suspect Management**
+
+    -   Displays and manages suspect information.
+
+-   **Victim Management**
+
+    -   Manages and displays information about victims in cases.
+
+-   **Search**
+
+    -   Facilitates searching across both suspect and victim data.
+
+-   **Visualization Chart**
+
+    -   Provides charts and visual representations of statistical data related to cases, suspects, or victims.
+
+-   **Report**
+
+    -   Generates reports based on case data.
+
+-   **Database Handler**
+
+    -   Manages the database for storing and retrieving case, victim, and suspect information.
+
+-   **Calendar Module**
+    -   Displays and allows interaction with the case scheduling.
 
 ---
 
@@ -13,9 +43,9 @@ A desktop application built with **Flet** for managing tasks using an MVC archit
 
 Before running the application, ensure the following tools are installed:
 
-- **Python**: Version 3.11.4.
-- **PostgreSQL**: For database storage.
-- **pip**: Python package manager.
+-   **Python**: Version 3.11.4.
+-   **PostgreSQL**: For database storage.
+-   **pip**: Python package manager.
 
 ---
 
@@ -49,8 +79,8 @@ pip install -r requirements.txt
 
 ### 4. Configure the Database
 
-- Create a PostgreSQL database.
-- Set up a `.env` file in the project root with the following content (adjust values as needed):
+-   Create a PostgreSQL database.
+-   Set up a `.env` file in the project root with the following content (adjust values as needed):
 
 ```env
 DATABASE_URL=postgresql://<username>:<password>@localhost/<database_name>
@@ -75,7 +105,6 @@ project/
 ├── img/                # Images and visual resources
 ├── src/                # Source code directory
 │   ├── __init__.py     # Initialize the src package
-│   ├── __pycache__/    # Compiled Python files (auto-generated)
 │   ├── controllers/    # Controller logic (handles business operations)
 │   ├── models/         # Database models and initialization scripts
 │   ├── routes/         # Routing
@@ -91,4 +120,83 @@ project/
 
 ## Modules
 
+| No  | Daftar Modul        | Nama Modul                 | Pembagian Tugas                     |
+| --- | ------------------- | -------------------------- | ----------------------------------- |
+| 1.  | Case Management     | Case View                  | 13523008 13523012 13523036          |
+| 2.  | Suspect Management  | Suspect View               | 13523008 13523036                   |
+| 3.  | Victim Management   | Victim View                | 13523008 13523012 13523036 13523092 |
+| 4.  | Search              | Suspect View & Victim View | 13523036 13523044 13523092          |
+| 5.  | Vizualization Chart | Statistic View             | 13523008                            |
+| 6.  | Report              | Case View                  | 13523008                            |
+| 7.  | Database Handler    | Database                   | 13523036                            |
+| 8.  | Calendar Module     | Schedule View              | 13523008 13523036                   |
+
+### Case
+
+![Case](img\case.png)
+
+### Suspect
+
+![Suspect](img\suspect.png)
+
+### Victim
+
+![Victim](img\victim.png)
+
+### Schedule
+
+![Schedule](img\schedule.png)
+
+### Statistic
+
+![Statistic](img\statistic.png)
+
 ## Database
+
+#### `cases`
+
+| Column      | Type    | Description             |
+| ----------- | ------- | ----------------------- |
+| id          | Integer | Primary key.            |
+| progress    | Integer | Progress percentage.    |
+| startDate   | Date    | Start date of the case. |
+| description | Text    | Case description.       |
+| detective   | String  | Detective assigned.     |
+| priority    | String  | Priority level.         |
+
+#### `suspects`
+
+| Column       | Type    | Description       |
+| ------------ | ------- | ----------------- |
+| id           | Integer | Primary key.      |
+| nik          | String  | National ID.      |
+| picture_path | String  | Path to picture.  |
+| name         | String  | Name of suspect.  |
+| age          | Integer | Age of suspect.   |
+| gender       | Boolean | Gender.           |
+| note         | Text    | Additional notes. |
+
+#### `victims`
+
+| Column          | Type    | Description                   |
+| --------------- | ------- | ----------------------------- |
+| id              | Integer | Primary key.                  |
+| nik             | String  | National ID.                  |
+| picture_path    | String  | Path to picture.              |
+| name            | String  | Name of victim.               |
+| age             | Integer | Age of victim.                |
+| forensic_result | Text    | Results of forensic analysis. |
+
+#### `case_suspects`
+
+| Column     | Type       | Description              |
+| ---------- | ---------- | ------------------------ |
+| case_id    | ForeignKey | Reference to `cases`.    |
+| suspect_id | ForeignKey | Reference to `suspects`. |
+
+#### `case_victims`
+
+| Column    | Type       | Description             |
+| --------- | ---------- | ----------------------- |
+| case_id   | ForeignKey | Reference to `cases`.   |
+| victim_id | ForeignKey | Reference to `victims`. |
