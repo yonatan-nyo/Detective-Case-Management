@@ -131,25 +131,26 @@ project/
 | 7.  | Database Handler    | Database                   | 13523036                            |
 | 8.  | Calendar Module     | Schedule View              | 13523008 13523036                   |
 
+
 ### Case
 
-![Case](img\case.png)
+![Case](doc\case_view.png)
 
 ### Suspect
 
-![Suspect](img\suspect.png)
+![Suspect](doc\suspect_view.png)
 
 ### Victim
 
-![Victim](img\victim.png)
+![Victim](doc\victim_view.png)
 
 ### Schedule
 
-![Schedule](img\schedule.png)
+![Schedule](doc\schedule_view.png)
 
 ### Statistic
 
-![Statistic](img\statistic.png)
+![Statistic](doc\statistic_view.png)
 
 ## Database
 

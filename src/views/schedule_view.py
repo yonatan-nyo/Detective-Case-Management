@@ -133,7 +133,7 @@ class Schedule:
                 ft.Dropdown(
                     label="Bulan",
                     options=[ft.dropdown.Option(month)
-                             for month in calendar.month_name[1:]],
+                            for month in calendar.month_name[1:]],
                     value=calendar.month_name[self.current_month],
                     width=120,
                     on_change=lambda e: self.update_date(
@@ -161,7 +161,7 @@ class Schedule:
                     label="Victim",
                     options=victim_options,
                     value=self.selected_victim,
-                    width=100,
+                    width=120,
                     on_change=lambda e: self.update_filter(
                         self.current_priority, e.control.value, self.selected_suspect),
                 ),
@@ -169,7 +169,7 @@ class Schedule:
                     label="Suspect",
                     options=suspect_options,
                     value=self.selected_suspect,
-                    width=100,
+                    width=120,
                     on_change=lambda e: self.update_filter(
                         self.current_priority, self.selected_victim, e.control.value),
                 ),
