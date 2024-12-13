@@ -134,23 +134,23 @@ project/
 
 ### Case
 
-![Case](doc\case_view.png)
+![Case](doc/case_view.png)
 
 ### Suspect
 
-![Suspect](doc\suspect_view.png)
+![Suspect](doc/suspect_view.png)
 
 ### Victim
 
-![Victim](doc\victim_view.png)
+![Victim](doc/victim_view.png)
 
 ### Schedule
 
-![Schedule](doc\schedule_view.png)
+![Schedule](doc/schedule_view.png)
 
 ### Statistic
 
-![Statistic](doc\statistic_view.png)
+![Statistic](doc/statistic_view.png)
 
 ## Database
 
