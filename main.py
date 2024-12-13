@@ -1,16 +1,15 @@
-import sys
-from PyQt6.QtWidgets import QApplication
-from src.views.MainWindow import MainWindow
-from src.models.database import init_db
+import flet as ft
+
+from src.models.init_database import init_db
+from src.views.case_view import CaseView
 
 
-def main():
-    init_db()
-    app = QApplication(sys.argv)
-    window = MainWindow()
-    window.show()
-    sys.exit(app.exec())
+def main(page: ft.Page):
+    page.theme_mode = ft.ThemeMode.DARK
+    page.title = "Kasus Kriminal"
+    CaseView().render(page)
 
 
 if __name__ == "__main__":
-    main()
+    init_db()
+    ft.app(main)
