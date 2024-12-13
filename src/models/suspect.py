@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, Boolean, Text, select, func
-from sqlalchemy.orm import relationship, column_property
+from sqlalchemy import Column, Integer, String, Boolean, Text
+from sqlalchemy.orm import relationship
 from .case_suspect import CaseSuspect
 from .database import Base
 
