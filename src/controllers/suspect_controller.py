@@ -1,6 +1,6 @@
-from models.suspect import Suspect
-from models.database import SessionLocal
-from models.case import Case
+from src.models.suspect import Suspect
+from src.models.database import SessionLocal
+from src.models.case import Case
 
 
 class SuspectController:
@@ -90,7 +90,7 @@ class SuspectController:
             self.db.refresh(case)
             return case
         return None
-    
+
     def search_suspects(self, name=None, nik=None):
         if name and nik:
             by_name = set(self.db.query(Suspect).filter(

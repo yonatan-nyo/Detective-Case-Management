@@ -18,5 +18,3 @@ class Victim(Base):
 
     cases = relationship('Case', secondary=CaseVictim,
                          back_populates='victims')
-
-    

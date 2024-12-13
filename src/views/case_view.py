@@ -1,15 +1,15 @@
 # views/case_view.py
-import flet as ft
-from controllers.case_controller import CaseController
 from datetime import date
-import os
+import flet as ft
 from fpdf import FPDF
-from routes.destinations import destinations
+
+from src.controllers.case_controller import CaseController
+from src.routes.destinations import destinations
 
 
 def on_navigation_change(page: ft.Page, selected_index: int):
-    page.floating_action_button = None
     """Handles navigation change to display appropriate content."""
+    page.floating_action_button = None
     # if selected_index == 0:  # Manajemen Kasus
     rail = ft.NavigationRail(
         selected_index=selected_index,
@@ -24,16 +24,16 @@ def on_navigation_change(page: ft.Page, selected_index: int):
     if selected_index == 0:
         CaseView().render(page)
     elif selected_index == 1:
-        from views.suspect_view import SuspectView
+        from src.views.suspect_view import SuspectView
         SuspectView().render(page)
     elif selected_index == 2:
-        from views.victim_view import VictimView
+        from src.views.victim_view import VictimView
         VictimView().render(page)
     elif selected_index == 3:
-        from views.schedule_view import Schedule
+        from src.views.schedule_view import Schedule
         Schedule().render(page)
     elif selected_index == 4:
-        from views.statistic_view import Statistic
+        from src.views.statistic_view import Statistic
         Statistic().render(page)
     else:
         page.controls.clear()

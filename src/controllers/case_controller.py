@@ -1,8 +1,8 @@
 # controllers/case_controller.py
-from models.case import Case
-from models.database import SessionLocal
-from models.victim import Victim
-from models.suspect import Suspect
+from src.models.case import Case
+from src.models.database import SessionLocal
+from src.models.victim import Victim
+from src.models.suspect import Suspect
 
 
 class CaseController:
@@ -142,7 +142,8 @@ class CaseController:
 
         # Create a subquery to count cases per suspect
         suspect_case_counts = (
-            self.db.query(Suspect.id, Suspect.name, func.count(Case.id).label('cases_count'))
+            self.db.query(Suspect.id, Suspect.name,
+                          func.count(Case.id).label('cases_count'))
             .join(Case.suspects)
             .group_by(Suspect.id, Suspect.name)
             .order_by(func.count(Case.id).desc())
@@ -153,8 +154,8 @@ class CaseController:
         # Convert results to a list of objects with name and cases_count attributes
         return [
             type('SuspectStats', (), {
-                'id': suspect[0], 
-                'name': suspect[1], 
+                'id': suspect[0],
+                'name': suspect[1],
                 'cases_count': suspect[2]
             })() for suspect in suspect_case_counts
         ]
@@ -165,7 +166,8 @@ class CaseController:
 
         # Create a subquery to count cases per victim
         victim_case_counts = (
-            self.db.query(Victim.id, Victim.name, func.count(Case.id).label('cases_count'))
+            self.db.query(Victim.id, Victim.name, func.count(
+                Case.id).label('cases_count'))
             .join(Case.victims)
             .group_by(Victim.id, Victim.name)
             .order_by(func.count(Case.id).desc())
@@ -176,8 +178,8 @@ class CaseController:
         # Convert results to a list of objects with name and cases_count attributes
         return [
             type('VictimStats', (), {
-                'id': victim[0], 
-                'name': victim[1], 
+                'id': victim[0],
+                'name': victim[1],
                 'cases_count': victim[2]
             })() for victim in victim_case_counts
         ]

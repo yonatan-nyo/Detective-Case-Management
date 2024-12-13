@@ -1,7 +1,7 @@
 # controllers/victim_controller.py
-from models.victim import Victim
-from models.database import SessionLocal
-from models.case import Case
+from src.models.victim import Victim
+from src.models.database import SessionLocal
+from src.models.case import Case
 
 
 class VictimController:

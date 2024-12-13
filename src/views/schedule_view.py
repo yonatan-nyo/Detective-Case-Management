@@ -1,11 +1,13 @@
-import flet as ft
-from routes.destinations import destinations
-from datetime import datetime, timedelta
 import calendar
-from controllers.case_controller import CaseController
-from controllers.victim_controller import VictimController
-from controllers.suspect_controller import SuspectController
-from controllers.calendar_controller import CalendarController
+from datetime import datetime, timedelta
+
+import flet as ft
+
+from src.routes.destinations import destinations
+from src.controllers.case_controller import CaseController
+from src.controllers.victim_controller import VictimController
+from src.controllers.suspect_controller import SuspectController
+from src.controllers.calendar_controller import CalendarController
 
 
 def on_navigation_change(page: ft.Page, selected_index: int):
@@ -22,18 +24,18 @@ def on_navigation_change(page: ft.Page, selected_index: int):
     )
 
     if selected_index == 0:
-        from views.case_view import CaseView
+        from src.views.case_view import CaseView
         CaseView().render(page)
     elif selected_index == 1:
-        from views.suspect_view import SuspectView
+        from src.views.suspect_view import SuspectView
         SuspectView().render(page)
     elif selected_index == 2:
-        from views.victim_view import VictimView
+        from src.views.victim_view import VictimView
         VictimView().render(page)
     elif selected_index == 3:
         Schedule().render(page)
     elif selected_index == 4:
-        from views.statistic_view import Statistic
+        from src.views.statistic_view import Statistic
         Statistic().render(page)
     else:
         page.controls.clear()
