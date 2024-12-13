@@ -1,7 +1,7 @@
 import flet as ft
 
-from models.init_database import init_db
-from views.case_view import CaseView
+from src.models.init_database import init_db
+from src.views.case_view import CaseView
 
 
 def main(page: ft.Page):

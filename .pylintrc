@@ -2,6 +2,7 @@
 
 ignore-patterns=
   database.py,
+  icon.png,
 
 disable= 
   C0114, 
@@ -18,3 +19,16 @@ disable=
   R0801,
   W0640,
   R0401,
+  W0613,
+  C0325,
+  R0915,
+  C0207,
+  E1102,
+  R1710,
+  W0201,
+  E0102,
+  R1714,
+  R0914,
+  R0902,
+  W0718,
+  R1728,

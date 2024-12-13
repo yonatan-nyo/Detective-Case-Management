@@ -25,4 +25,4 @@ company = "Flet"
 copyright = "Copyright (C) 2024 by Flet"
 
 [tool.flet.app]
-path = "src"
+path = ""

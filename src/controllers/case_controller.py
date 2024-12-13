@@ -1,8 +1,8 @@
 # controllers/case_controller.py
-from models.case import Case
-from models.database import SessionLocal
-from models.victim import Victim
-from models.suspect import Suspect
+from src.models.case import Case
+from src.models.database import SessionLocal
+from src.models.victim import Victim
+from src.models.suspect import Suspect
 
 
 class CaseController:
@@ -139,10 +139,7 @@ class CaseController:
     def get_top_ten_suspects(self):
         """Retrieve the top ten suspects by number of cases."""
         return self.db.query(Suspect).order_by(Suspect.cases_count.desc()).limit(10).all()
-    
 
     def get_top_ten_victims(self):
         """Retrieve the top ten victims by number of cases."""
         return self.db.query(Victim).order_by(Victim.cases_count.desc()).limit(10).all()
-    
-    

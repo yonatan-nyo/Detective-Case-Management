@@ -5,13 +5,13 @@ import uuid
 from datetime import datetime
 
 import flet as ft
-from controllers.suspect_controller import SuspectController
-from routes.destinations import destinations
+from src.controllers.suspect_controller import SuspectController
+from src.routes.destinations import destinations
 
 
 def on_navigation_change(page: ft.Page, selected_index: int):
-    page.floating_action_button = None
     """Handles navigation change to display appropriate content."""
+    page.floating_action_button = None
     rail = ft.NavigationRail(
         selected_index=selected_index,
         label_type=ft.NavigationRailLabelType.ALL,
@@ -23,18 +23,18 @@ def on_navigation_change(page: ft.Page, selected_index: int):
             page, e.control.selected_index),
     )
     if selected_index == 0:
-        from views.case_view import CaseView
+        from src.views.case_view import CaseView
         CaseView().render(page)
     elif selected_index == 1:
         SuspectView().render(page)
     elif selected_index == 2:
-        from views.victim_view import VictimView
+        from src.views.victim_view import VictimView
         VictimView().render(page)
     elif selected_index == 3:
-        from views.schedule_view import Schedule
+        from src.views.schedule_view import Schedule
         Schedule().render(page)
     elif selected_index == 4:
-        from views.statistic_view import Statistic
+        from src.views.statistic_view import Statistic
         Statistic().render(page)
     else:
         page.controls.clear()

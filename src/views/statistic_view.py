@@ -1,6 +1,6 @@
 import flet as ft
-from routes.destinations import destinations
-from controllers.case_controller import CaseController
+from src.routes.destinations import destinations
+from src.controllers.case_controller import CaseController
 
 
 def on_navigation_change(page: ft.Page, selected_index: int):
@@ -17,16 +17,16 @@ def on_navigation_change(page: ft.Page, selected_index: int):
     )
 
     if selected_index == 0:
-        from views.case_view import CaseView
+        from src.views.case_view import CaseView
         CaseView().render(page)
     elif selected_index == 1:
-        from views.suspect_view import SuspectView
+        from src.views.suspect_view import SuspectView
         SuspectView().render(page)
     elif selected_index == 2:
-        from views.victim_view import VictimView
+        from src.views.victim_view import VictimView
         VictimView().render(page)
     elif selected_index == 3:
-        from views.schedule_view import Schedule
+        from src.views.schedule_view import Schedule
         Schedule().render(page)
     elif selected_index == 4:
         Statistic().render(page)
