@@ -171,6 +171,7 @@ class CaseView:
 
         # Define the dropdown
         dd = ft.Dropdown(
+            label="Progress",
             width=150,
             options=[
                 ft.dropdown.Option("All"),
