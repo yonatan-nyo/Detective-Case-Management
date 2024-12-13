@@ -1,6 +1,3 @@
-from datetime import date
-
-from src.models.database import Base
 from src.models.case import Case
 from src.controllers.calendar_controller import CalendarController
 
