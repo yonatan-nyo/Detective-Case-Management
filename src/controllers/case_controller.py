@@ -137,9 +137,49 @@ class CaseController:
             self.db.commit()
 
     def get_top_ten_suspects(self):
-        """Retrieve the top ten suspects by number of cases."""
-        return self.db.query(Suspect).order_by(Suspect.cases_count.desc()).limit(10).all()
+        """Retrieve top 10 suspects by number of cases they are involved in."""
+        from sqlalchemy import func
+
+        # Create a subquery to count cases per suspect
+        suspect_case_counts = (
+            self.db.query(Suspect.id, Suspect.name,
+                          func.count(Case.id).label('cases_count'))
+            .join(Case.suspects)
+            .group_by(Suspect.id, Suspect.name)
+            .order_by(func.count(Case.id).desc())
+            .limit(10)
+            .all()
+        )
+
+        # Convert results to a list of objects with name and cases_count attributes
+        return [
+            type('SuspectStats', (), {
+                'id': suspect[0],
+                'name': suspect[1],
+                'cases_count': suspect[2]
+            })() for suspect in suspect_case_counts
+        ]
 
     def get_top_ten_victims(self):
-        """Retrieve the top ten victims by number of cases."""
-        return self.db.query(Victim).order_by(Victim.cases_count.desc()).limit(10).all()
+        """Retrieve top 10 victims by number of cases they are involved in."""
+        from sqlalchemy import func
+
+        # Create a subquery to count cases per victim
+        victim_case_counts = (
+            self.db.query(Victim.id, Victim.name, func.count(
+                Case.id).label('cases_count'))
+            .join(Case.victims)
+            .group_by(Victim.id, Victim.name)
+            .order_by(func.count(Case.id).desc())
+            .limit(10)
+            .all()
+        )
+
+        # Convert results to a list of objects with name and cases_count attributes
+        return [
+            type('VictimStats', (), {
+                'id': victim[0],
+                'name': victim[1],
+                'cases_count': victim[2]
+            })() for victim in victim_case_counts
+        ]
